@@ -1,5 +1,5 @@
 <div align="center">
-<img src="assets/logo.svg" width="50%"/>
+<img src="assets/logo.svg" width="25%"/>
 </div>
 
 O **GuimScore** é um sistema desenvolvido para armazenar e gerenciar dados de jogos online, como pontuações, itens adquiridos, progresso e outras informações relevantes. O objetivo principal é fornecer uma solução eficiente para jogadores e desenvolvedores que desejam manter um histórico organizado de suas atividades em jogos online.
