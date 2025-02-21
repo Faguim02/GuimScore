@@ -3,6 +3,7 @@ package com.app.guimscore.service;
 import com.app.guimscore.controller.models.SignInResDto;
 import com.app.guimscore.controller.models.SignUpResDto;
 import com.app.guimscore.dto.UserDto;
+import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.roles.UserRole;
 import com.app.guimscore.repository.UserRepository;
@@ -23,6 +24,8 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
 
     public SignUpResDto signUp(UserDto userDto) {
 
@@ -48,12 +51,12 @@ public class AuthService {
     public SignInResDto signIn(UserDto userDto) {
         try {
             var userNamePassword = new UsernamePasswordAuthenticationToken(userDto.getName(), userDto.getPassword());
-            this.authenticationManager.authenticate(userNamePassword);
+            var auth = this.authenticationManager.authenticate(userNamePassword);
+
+            return new SignInResDto(this.jwtService.generateToken((UserModel) auth.getPrincipal()));
         } catch (AuthenticationException exception) {
             throw new RuntimeException("Erro ao acessar a conta");
         }
-
-        return new SignInResDto("");
     }
 
 }
