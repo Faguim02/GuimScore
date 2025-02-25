@@ -5,6 +5,8 @@ import com.app.guimscore.controller.models.SignUpResDto;
 import com.app.guimscore.dto.UserDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ConflictException;
+import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.roles.UserRole;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -39,7 +41,7 @@ public class AuthService {
         userModel.setPassword(passwordEncode);
 
         if (this.userRepository.existsByName(userDto.getName())) {
-            throw new RuntimeException("puta que pario, já existe");
+            throw new ConflictException("Já existe um usuario com esse nome");
         }
 
         this.userRepository.save(userModel);
@@ -55,7 +57,7 @@ public class AuthService {
 
             return new SignInResDto(this.jwtService.generateToken((UserModel) auth.getPrincipal()));
         } catch (AuthenticationException exception) {
-            throw new RuntimeException("Erro ao acessar a conta");
+            throw new ForbiddenException("username ou senha incorreta");
         }
     }
 
