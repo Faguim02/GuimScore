@@ -1,7 +1,7 @@
 package com.app.guimscore.service;
 
-import com.app.guimscore.controller.models.SignInResDto;
-import com.app.guimscore.controller.models.SignUpResDto;
+import com.app.guimscore.view.model.SignInResDto;
+import com.app.guimscore.view.model.SignUpResDto;
 import com.app.guimscore.dto.UserDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.model.UserModel;

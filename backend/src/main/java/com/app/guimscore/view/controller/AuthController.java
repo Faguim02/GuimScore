@@ -1,9 +1,9 @@
-package com.app.guimscore.controller;
+package com.app.guimscore.view.controller;
 
-import com.app.guimscore.controller.models.SignInReqDto;
-import com.app.guimscore.controller.models.SignInResDto;
-import com.app.guimscore.controller.models.SignUpReqDto;
-import com.app.guimscore.controller.models.SignUpResDto;
+import com.app.guimscore.view.model.SignInReqDto;
+import com.app.guimscore.view.model.SignInResDto;
+import com.app.guimscore.view.model.SignUpReqDto;
+import com.app.guimscore.view.model.SignUpResDto;
 import com.app.guimscore.dto.UserDto;
 import com.app.guimscore.service.AuthService;
 import org.springframework.beans.BeanUtils;
