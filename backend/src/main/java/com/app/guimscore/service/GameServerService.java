@@ -21,17 +21,22 @@ public class GameServerService {
 
     public void createGameServer(GameServerDto gameServerDto, UUID userId) {
 
-        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        try {
+            Optional<UserModel> userModel = this.userRepository.findById(userId);
 
-        if (userModel.isEmpty()) {
-            throw new NotFoundException("Usuario inexistente");
+            if (userModel.isEmpty()) {
+                throw new NotFoundException("Usuario inexistente");
+            }
+
+            GameServerModel gameServerModel = new GameServerModel();
+
+            BeanUtils.copyProperties(gameServerDto, gameServerModel);
+
+            gameServerModel.setUser(userModel.get());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        GameServerModel gameServerModel = new GameServerModel();
-
-        BeanUtils.copyProperties(gameServerDto, gameServerModel);
-
-        gameServerModel.setUser(userModel.get());
 
     }
 
