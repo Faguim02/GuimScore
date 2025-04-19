@@ -2,6 +2,7 @@ package com.app.guimscore.service;
 
 import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.GameServerRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +35,7 @@ public class GameServerServiceTest {
     class createGameServer {
 
         @Test
+        @DisplayName("should executable normal")
         void shouldNotReturnException() {
 
             GameServerDto gameServerDto = new GameServerDto();
@@ -46,6 +47,18 @@ public class GameServerServiceTest {
 
             Assertions.assertDoesNotThrow(() -> gameServerService.createGameServer(gameServerDto, uuid), RuntimeException.class.getName());
 
+        }
+
+        @Test
+        @DisplayName("should return notfound exception")
+        void shouldReturnException() {
+
+            GameServerDto gameServerDto = new GameServerDto();
+            UUID uuid = UUID.randomUUID();
+
+            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> gameServerService.createGameServer(gameServerDto, uuid));
         }
 
     }
