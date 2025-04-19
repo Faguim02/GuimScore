@@ -9,8 +9,10 @@ import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GameServerService {
 
@@ -41,6 +43,34 @@ public class GameServerService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public List<GameServerDto> findAllGameServers(UUID userId) {
+        try{
+            Optional<UserModel> userModel = this.userRepository.findById(userId);
+
+            if (userModel.isEmpty()) {
+                throw new NotFoundException("Usuario inexistente");
+            }
+
+            List<GameServerModel> gameServerModels = this.gameServerRepository.findByUser(userModel.get());
+
+            return gameServerModels.stream()
+                    .map(GameServerService::convertGameServerModelToDto)
+                    .toList();
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static GameServerDto convertGameServerModelToDto(GameServerModel gameServerModel) {
+        GameServerDto gameServerDto = new GameServerDto();
+        BeanUtils.copyProperties(gameServerModel, gameServerDto);
+        return gameServerDto;
     }
 
 }
