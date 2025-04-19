@@ -34,7 +34,10 @@ public class GameServerService {
 
             gameServerModel.setUser(userModel.get());
 
-        } catch (Exception e) {
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
 
