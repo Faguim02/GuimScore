@@ -1,6 +1,7 @@
 package com.app.guimscore.service;
 
 import com.app.guimscore.dto.GameServerDto;
+import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.GameServerRepository;
@@ -15,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,6 +62,30 @@ public class GameServerServiceTest {
             Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
 
             Assertions.assertThrows(NotFoundException.class, () -> gameServerService.createGameServer(gameServerDto, uuid));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("function 'findAllGameServer()'")
+    class FindAllGameServer {
+
+        @Test
+        @DisplayName("should return list from game server")
+        void shouldReturnListGameServer() {
+            GameServerModel gameServerModel = new GameServerModel();
+            gameServerModel.setNameServer("game1");
+            List<GameServerModel> gameServerModelList = new ArrayList<>(List.of(gameServerModel));
+            UserModel userModel = new UserModel();
+
+            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(userModel));
+            Mockito.when(gameServerRepository.findByUser(Mockito.any(UserModel.class))).thenReturn(gameServerModelList);
+
+            List<GameServerDto> gameServerDtos = gameServerService.findAllGameServers(UUID.randomUUID());
+
+            Assertions.assertEquals(1, gameServerDtos.size());
+            Assertions.assertEquals("game1", gameServerDtos.get(0).getNameServer());
+            Assertions.assertNotNull(gameServerDtos.get(0).getUuid());
         }
 
     }
