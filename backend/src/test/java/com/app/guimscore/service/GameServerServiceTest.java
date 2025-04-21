@@ -140,6 +140,15 @@ public class GameServerServiceTest {
 
             Assertions.assertThrows(ForbiddenException.class, () -> gameServerService.findGameServerById(UUID.randomUUID(), gameServerModel.getUuid()));
         }
+
+        @Test
+        @DisplayName("should return not found exception")
+        void shouldReturnNotFoundException() {
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class,() -> gameServerService.findGameServerById(UUID.randomUUID(), UUID.randomUUID()));
+        }
     }
 
 }
