@@ -26,6 +26,10 @@ public class UserModel implements UserDetails {
     private UserRole userRole;
     private GameServerModel gameServerModel;
 
+    public UserModel() {
+        this.uuid = UUID.randomUUID();
+    }
+
     public UUID getUuid() {
         return uuid;
     }
