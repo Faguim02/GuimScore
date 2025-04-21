@@ -71,17 +71,9 @@ public class GameServerService {
     public GameServerDto findGameServerById(UUID userId, UUID gameServerId) {
         try {
 
-            Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+            GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
-            if (gameServerModel.isEmpty()) {
-                throw new NotFoundException("GameServer não encontrado1");
-            }
-
-            if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
-                throw new ForbiddenException("Não authorizado!");
-            }
-
-            return convertGameServerModelToDto(gameServerModel.get());
+            return convertGameServerModelToDto(gameServerModel);
 
         } catch (ForbiddenException forbiddenException) {
           throw new ForbiddenException(forbiddenException.getMessage());
@@ -93,30 +85,14 @@ public class GameServerService {
     }
 
     void deleteGameServer(UUID userId, UUID gameServerId) {
-        Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+        GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
-        if (gameServerModel.isEmpty()) {
-            throw new NotFoundException("GameServer não encontrado");
-        }
-
-        if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
-            throw new ForbiddenException("Não authorizado!");
-        }
-
-        gameServerRepository.delete(gameServerModel.get());
+        gameServerRepository.delete(gameServerModel);
 
     }
 
     void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {
-        Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
-
-        if (gameServerModel.isEmpty()) {
-            throw new NotFoundException("GameServer não encontrado");
-        }
-
-        if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
-            throw new ForbiddenException("Não authorizado!");
-        }
+        GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
         GameServerModel gameServerModelSave = new GameServerModel();
 
@@ -125,10 +101,23 @@ public class GameServerService {
         this.gameServerRepository.save(gameServerModelSave);
     }
 
+    private GameServerModel isGameServerExistAndAuthorized(UUID userId, UUID gameServerId) {
+        Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+
+        if (gameServerModel.isEmpty()) {
+            throw new NotFoundException("GameServer não encontrado");
+        }
+
+        if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
+            throw new ForbiddenException("Não authorizado!");
+        }
+
+        return gameServerModel.get();
+    }
+
     private static GameServerDto convertGameServerModelToDto(GameServerModel gameServerModel) {
         GameServerDto gameServerDto = new GameServerDto();
         BeanUtils.copyProperties(gameServerModel, gameServerDto);
         return gameServerDto;
     }
-
 }
