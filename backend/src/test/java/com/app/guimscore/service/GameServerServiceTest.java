@@ -103,4 +103,28 @@ public class GameServerServiceTest {
 
     }
 
+    @Nested
+    @DisplayName("function 'findGameServerById()'")
+    class FindGameServerById {
+
+        @Test
+        @DisplayName("should return gameServer")
+        void shouldReturnGameServer() {
+
+            GameServerModel gameServerModel = new GameServerModel();
+            gameServerModel.setNameServer("game one");
+            UserModel userModel = new UserModel();
+            userModel.setName("Fulano");
+            gameServerModel.setUser(userModel);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+
+            GameServerDto gameServerDto = gameServerService.findGameServerById(userModel.getUuid(), gameServerModel.getUuid());
+
+            Assertions.assertEquals("game one", gameServerDto.getNameServer());
+            Assertions.assertEquals("Fulano", gameServerDto.getUser().getName());
+
+        }
+    }
+
 }
