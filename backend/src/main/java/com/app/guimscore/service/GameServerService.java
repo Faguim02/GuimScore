@@ -92,6 +92,39 @@ public class GameServerService {
         }
     }
 
+    void deleteGameServer(UUID userId, UUID gameServerId) {
+        Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+
+        if (gameServerModel.isEmpty()) {
+            throw new NotFoundException("GameServer não encontrado");
+        }
+
+        if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
+            throw new ForbiddenException("Não authorizado!");
+        }
+
+        gameServerRepository.delete(gameServerModel.get());
+
+    }
+
+    void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {
+        Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+
+        if (gameServerModel.isEmpty()) {
+            throw new NotFoundException("GameServer não encontrado");
+        }
+
+        if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
+            throw new ForbiddenException("Não authorizado!");
+        }
+
+        GameServerModel gameServerModelSave = new GameServerModel();
+
+        BeanUtils.copyProperties(gameServerDto, gameServerModel);
+
+        this.gameServerRepository.save(gameServerModelSave);
+    }
+
     private static GameServerDto convertGameServerModelToDto(GameServerModel gameServerModel) {
         GameServerDto gameServerDto = new GameServerDto();
         BeanUtils.copyProperties(gameServerModel, gameServerDto);
