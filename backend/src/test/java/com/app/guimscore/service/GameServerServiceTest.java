@@ -3,6 +3,7 @@ package com.app.guimscore.service;
 import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.GameServerRepository;
 import com.app.guimscore.repository.UserRepository;
@@ -124,6 +125,20 @@ public class GameServerServiceTest {
             Assertions.assertEquals("game one", gameServerDto.getNameServer());
             Assertions.assertEquals("Fulano", gameServerDto.getUser().getName());
 
+        }
+
+        @Test
+        @DisplayName("should return forbidden exception")
+        void shouldReturnForbiddenException() {
+            GameServerModel gameServerModel = new GameServerModel();
+            gameServerModel.setNameServer("game one");
+            UserModel userModel = new UserModel();
+            userModel.setName("Fulano");
+            gameServerModel.setUser(userModel);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> gameServerService.findGameServerById(UUID.randomUUID(), gameServerModel.getUuid()));
         }
     }
 
