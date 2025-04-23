@@ -151,4 +151,12 @@ public class GameServerServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("function 'deleteGameServer()'")
+    class DeleteGameServer {
+
+
+
+    }
+
 }
