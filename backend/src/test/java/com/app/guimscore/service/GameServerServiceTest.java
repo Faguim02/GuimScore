@@ -155,7 +155,23 @@ public class GameServerServiceTest {
     @DisplayName("function 'deleteGameServer()'")
     class DeleteGameServer {
 
+        @DisplayName("should delete a gameserver")
+        @Test
+        void shouldDeleteGameServer() {
 
+            UUID uuid = UUID.randomUUID();
+            GameServerModel gameServerModel = new GameServerModel();
+            gameServerModel.setUuid(uuid);
+
+            UserModel userModel = new UserModel();
+            userModel.setUuid(uuid);
+            gameServerModel.setUser(userModel);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+
+            gameServerService.deleteGameServer(uuid, uuid);
+
+        }
 
     }
 
