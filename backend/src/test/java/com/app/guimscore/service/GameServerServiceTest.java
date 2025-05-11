@@ -151,28 +151,40 @@ public class GameServerServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("function 'deleteGameServer()'")
-    class DeleteGameServer {
+    @DisplayName("should delete a gameserver")
+    @Test
+    void shouldDeleteGameServer() {
 
-        @DisplayName("should delete a gameserver")
-        @Test
-        void shouldDeleteGameServer() {
+        UUID uuid = UUID.randomUUID();
+        GameServerModel gameServerModel = new GameServerModel();
+        gameServerModel.setUuid(uuid);
 
-            UUID uuid = UUID.randomUUID();
-            GameServerModel gameServerModel = new GameServerModel();
-            gameServerModel.setUuid(uuid);
+        UserModel userModel = new UserModel();
+        userModel.setUuid(uuid);
+        gameServerModel.setUser(userModel);
 
-            UserModel userModel = new UserModel();
-            userModel.setUuid(uuid);
-            gameServerModel.setUser(userModel);
+        Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
-            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+        gameServerService.deleteGameServer(uuid, uuid);
 
-            gameServerService.deleteGameServer(uuid, uuid);
+    }
 
-        }
+    @DisplayName("should update a gameServer")
+    @Test
+    void shouldUpdateGameServer() {
+        UUID uuid = UUID.randomUUID();
+        GameServerModel gameServerModel = new GameServerModel();
+        gameServerModel.setUuid(uuid);
 
+        UserModel userModel = new UserModel();
+        userModel.setUuid(uuid);
+        gameServerModel.setUser(userModel);
+
+        GameServerDto gameServerDto = new GameServerDto();
+
+        Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+
+        gameServerService.updateGameServer(uuid, uuid, gameServerDto);
     }
 
 }
