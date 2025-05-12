@@ -1,6 +1,7 @@
 package com.app.guimscore.service;
 
 import com.app.guimscore.dto.DataDto;
+import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
@@ -12,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,6 +55,28 @@ public class DataService {
 
     }
 
+    List<DataDto> findAllDatas(UUID userId, UUID gameServerId) {
 
+        try{
+
+            Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
+
+            List<DataModel> dataModelList = this.dataRepository.findByGameServerModel(gameServerModel.get());
+
+            return dataModelList.stream()
+                    .map(DataService::convertDataModelToDto)
+                    .toList();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private static DataDto convertDataModelToDto(DataModel dataModel) {
+        DataDto dataDto = new DataDto();
+        BeanUtils.copyProperties(dataModel, dataDto);
+        return dataDto;
+    }
 
 }
