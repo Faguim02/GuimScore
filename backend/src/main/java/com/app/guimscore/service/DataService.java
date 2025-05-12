@@ -87,6 +87,36 @@ public class DataService {
 
     }
 
+    DataDto findDataById(UUID dataId, UUID userId, UUID gameServerId) {
+
+        try {
+
+            Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
+
+            if (dataModel.isEmpty()) {
+                throw new NotFoundException("Data inexistente");
+            }
+
+            if (!dataModel.get().getPlayer().getUuid().equals(userId) || !dataModel.get().getGameServerModel().getUuid().equals(gameServerId)) {
+                throw new ForbiddenException("Acesso negado");
+            }
+
+            DataDto dataDto = new DataDto();
+
+            BeanUtils.copyProperties(dataModel, dataDto);
+
+            return dataDto;
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     private static DataDto convertDataModelToDto(DataModel dataModel) {
         DataDto dataDto = new DataDto();
         BeanUtils.copyProperties(dataModel, dataDto);
