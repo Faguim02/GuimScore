@@ -109,6 +109,22 @@ public class DataService {
 
     }
 
+    void deleteDataById(UUID dataId, UUID userId, UUID gameServerId) {
+        try {
+
+            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
+
+            this.dataRepository.delete(dataModel);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
         Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
 
