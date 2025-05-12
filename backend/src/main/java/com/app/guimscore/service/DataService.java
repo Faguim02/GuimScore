@@ -5,6 +5,7 @@ import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
@@ -61,13 +62,26 @@ public class DataService {
 
             Optional<GameServerModel> gameServerModel = this.gameServerRepository.findById(gameServerId);
 
+            if (gameServerModel.isEmpty()) {
+                throw new NotFoundException("GameServer inexistente");
+            }
+
+            if (gameServerModel.get().getUser().getUuid().equals(userId)) {
+                throw new ForbiddenException("Não authorizado");
+            }
+
             List<DataModel> dataModelList = this.dataRepository.findByGameServerModel(gameServerModel.get());
 
             return dataModelList.stream()
                     .map(DataService::convertDataModelToDto)
                     .toList();
 
-        } catch (Exception e) {
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
 
