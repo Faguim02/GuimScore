@@ -91,15 +91,7 @@ public class DataService {
 
         try {
 
-            Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
-
-            if (dataModel.isEmpty()) {
-                throw new NotFoundException("Data inexistente");
-            }
-
-            if (!dataModel.get().getPlayer().getUuid().equals(userId) || !dataModel.get().getGameServerModel().getUuid().equals(gameServerId)) {
-                throw new ForbiddenException("Acesso negado");
-            }
+            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
 
             DataDto dataDto = new DataDto();
 
@@ -115,6 +107,20 @@ public class DataService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
+        Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
+
+        if (dataModel.isEmpty()) {
+            throw new NotFoundException("Data inexistente");
+        }
+
+        if (!dataModel.get().getPlayer().getUuid().equals(userId) || !dataModel.get().getGameServerModel().getUuid().equals(gameServerId)) {
+            throw new ForbiddenException("Acesso negado");
+        }
+
+        return dataModel.get();
     }
 
     private static DataDto convertDataModelToDto(DataModel dataModel) {
