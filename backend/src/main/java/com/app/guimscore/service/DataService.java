@@ -125,6 +125,26 @@ public class DataService {
         }
     }
 
+    void updateData(UUID dataId, UUID userId, UUID gameServerId, DataDto dataDto) {
+        try {
+
+            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
+
+            DataModel newData = new DataModel();
+
+            BeanUtils.copyProperties(dataDto, newData);
+
+            this.dataRepository.save(newData);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
         Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
 
