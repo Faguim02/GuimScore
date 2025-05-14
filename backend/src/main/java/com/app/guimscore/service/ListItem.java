@@ -1,11 +1,15 @@
 package com.app.guimscore.service;
 
+import com.app.guimscore.dto.ItemDto;
 import com.app.guimscore.dto.ListItemDto;
 import com.app.guimscore.model.GameServerModel;
+import com.app.guimscore.model.ItemModel;
 import com.app.guimscore.model.ItemsModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.GameServerRepository;
+import com.app.guimscore.repository.ItemRepository;
 import com.app.guimscore.repository.ItemsRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +24,8 @@ public class ListItem {
 
     @Autowired
     ItemsRepository itemsRepository;
+    @Autowired
+    ItemRepository itemRepository;
     @Autowired
     private GameServerRepository gameServerRepository;
     @Autowired
@@ -39,6 +45,28 @@ public class ListItem {
         BeanUtils.copyProperties(listItemDto, itemsModel);
 
         this.itemsRepository.save(itemsModel);
+    }
+
+    void addItem(ItemDto itemDto, UUID listItemId, UUID userId, UUID gameServerId) {
+
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
+        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
+        }
+
+        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
+            throw new ForbiddenException("Permição negada");
+        }
+
+        ItemModel itemModel = new ItemModel();
+        BeanUtils.copyProperties(itemDto, itemModel);
+
+        itemModel.setListItem(itemsModelOptional.get());
+
+        this.itemRepository.save(itemModel);
     }
 
 }
