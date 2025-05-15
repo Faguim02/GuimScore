@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,6 +68,33 @@ public class ListItem {
         itemModel.setListItem(itemsModelOptional.get());
 
         this.itemRepository.save(itemModel);
+    }
+
+    List<ListItemDto> findAllLists(UUID gameServerId, UUID userId) {
+
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+        Optional<UserModel> userModelOptional = this.userRepository.findById(userId);
+
+        if (gameServerModelOptional.isEmpty() || userModelOptional.isEmpty()) {
+            throw new NotFoundException("GameServer ou usuario não indentificado");
+        }
+
+        if (!gameServerModelOptional.get().getUser().equals(userModelOptional.get())) {
+            throw new ForbiddenException("Acesso negado");
+        }
+
+        List<ItemsModel> itemsModelList = this.itemsRepository.findByGameServerModel(gameServerModelOptional.get());
+
+        return itemsModelList.stream()
+                .map(ListItem::converteModelInDto)
+                .toList();
+
+    }
+
+    private static ListItemDto converteModelInDto(ItemsModel itemsModel) {
+        ListItemDto listItemDto = new ListItemDto();
+        BeanUtils.copyProperties(itemsModel, listItemDto);
+        return listItemDto;
     }
 
 }
