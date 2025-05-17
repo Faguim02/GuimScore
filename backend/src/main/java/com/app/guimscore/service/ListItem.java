@@ -91,6 +91,32 @@ public class ListItem {
 
     }
 
+    ListItemDto findListById(UUID listId, UUID gameServerId, UUID userId) {
+
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (gameServerModelOptional.isEmpty()) {
+            throw new NotFoundException("GameServer inexistente");
+        }
+
+        if (gameServerModelOptional.get().getUser().getUuid().equals(userId)) {
+            throw new ForbiddenException("Acesso negado");
+        }
+
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listId);
+
+        if (itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Lista inexistente");
+        }
+
+        ListItemDto listItemDto = new ListItemDto();
+
+        BeanUtils.copyProperties(itemsModelOptional.get(), listItemDto);
+
+        return listItemDto;
+
+    }
+
     private static ListItemDto converteModelInDto(ItemsModel itemsModel) {
         ListItemDto listItemDto = new ListItemDto();
         BeanUtils.copyProperties(itemsModel, listItemDto);
