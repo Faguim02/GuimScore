@@ -109,6 +109,18 @@ public class ListItem {
 
     }
 
+    void updateList(ListItemDto listItemDto, UUID listId, UUID gameServerId, UUID userId) {
+
+        this.validateUserAdmin(gameServerId, userId);
+
+        ItemsModel itemsModel = new ItemsModel();
+
+        BeanUtils.copyProperties(listItemDto, itemsModel);
+
+        this.itemsRepository.save(itemsModel);
+
+    }
+
     void deleteList(UUID listId, UUID gameServerId, UUID userId) {
 
         this.validateUserAdmin(gameServerId, userId);
