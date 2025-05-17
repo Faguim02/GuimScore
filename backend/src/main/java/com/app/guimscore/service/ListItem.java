@@ -93,15 +93,7 @@ public class ListItem {
 
     ListItemDto findListById(UUID listId, UUID gameServerId, UUID userId) {
 
-        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
-
-        if (gameServerModelOptional.isEmpty()) {
-            throw new NotFoundException("GameServer inexistente");
-        }
-
-        if (gameServerModelOptional.get().getUser().getUuid().equals(userId)) {
-            throw new ForbiddenException("Acesso negado");
-        }
+        this.validateUserAdmin(gameServerId, userId);
 
         Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listId);
 
@@ -117,10 +109,30 @@ public class ListItem {
 
     }
 
+    void deleteList(UUID listId, UUID gameServerId, UUID userId) {
+
+        this.validateUserAdmin(gameServerId, userId);
+
+        this.itemsRepository.deleteById(listId);
+
+    }
+
     private static ListItemDto converteModelInDto(ItemsModel itemsModel) {
         ListItemDto listItemDto = new ListItemDto();
         BeanUtils.copyProperties(itemsModel, listItemDto);
         return listItemDto;
+    }
+
+    private void validateUserAdmin(UUID gameServerId, UUID userId) {
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (gameServerModelOptional.isEmpty()) {
+            throw new NotFoundException("GameServer inexistente");
+        }
+
+        if (gameServerModelOptional.get().getUser().getUuid().equals(userId)) {
+            throw new ForbiddenException("Acesso negado");
+        }
     }
 
 }
