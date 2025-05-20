@@ -170,6 +170,32 @@ public class ListItem {
 
     }
 
+    ItemDto findItemById(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
+        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
+        }
+
+        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
+            throw new ForbiddenException("Permição negada");
+        }
+
+        Optional<ItemModel> itemModel = this.itemRepository.findById(itemId);
+
+        if (itemModel.isEmpty()) {
+            throw new NotFoundException("Item inexistente");
+        }
+
+        ItemDto itemDto = new ItemDto();
+
+        BeanUtils.copyProperties(itemModel, itemDto);
+
+        return itemDto;
+    }
+
     private static ListItemDto convertListModelInDto(ItemsModel itemsModel) {
         ListItemDto listItemDto = new ListItemDto();
         BeanUtils.copyProperties(itemsModel, listItemDto);
