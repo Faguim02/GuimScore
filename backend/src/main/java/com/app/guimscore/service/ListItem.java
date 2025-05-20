@@ -48,28 +48,6 @@ public class ListItem {
         this.itemsRepository.save(itemsModel);
     }
 
-    void addItem(ItemDto itemDto, UUID listItemId, UUID userId, UUID gameServerId) {
-
-        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
-        Optional<UserModel> userModel = this.userRepository.findById(userId);
-        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
-
-        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
-            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
-        }
-
-        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
-            throw new ForbiddenException("Permição negada");
-        }
-
-        ItemModel itemModel = new ItemModel();
-        BeanUtils.copyProperties(itemDto, itemModel);
-
-        itemModel.setListItem(itemsModelOptional.get());
-
-        this.itemRepository.save(itemModel);
-    }
-
     List<ListItemDto> findAllLists(UUID gameServerId, UUID userId) {
 
         Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
@@ -86,7 +64,7 @@ public class ListItem {
         List<ItemsModel> itemsModelList = this.itemsRepository.findByGameServerModel(gameServerModelOptional.get());
 
         return itemsModelList.stream()
-                .map(ListItem::converteModelInDto)
+                .map(ListItem::convertListModelInDto)
                 .toList();
 
     }
@@ -129,10 +107,79 @@ public class ListItem {
 
     }
 
-    private static ListItemDto converteModelInDto(ItemsModel itemsModel) {
+    // Funções referentes a unidade dos itemns (Interação do player)
+    void addItem(ItemDto itemDto, UUID listItemId, UUID userId, UUID gameServerId) {
+
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
+        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
+        }
+
+        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
+            throw new ForbiddenException("Permição negada");
+        }
+
+        ItemModel itemModel = new ItemModel();
+        BeanUtils.copyProperties(itemDto, itemModel);
+
+        itemModel.setListItem(itemsModelOptional.get());
+
+        this.itemRepository.save(itemModel);
+    }
+
+    void removerItem(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
+
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
+        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
+        }
+
+        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
+            throw new ForbiddenException("Permição negada");
+        }
+
+        this.itemRepository.deleteById(itemId);
+
+    }
+
+    List<ItemDto> findAllItems(UUID listItemId, UUID userId, UUID gameServerId) {
+
+        Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
+        Optional<UserModel> userModel = this.userRepository.findById(userId);
+        Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
+
+        if (userModel.isEmpty() || gameServerModelOptional.isEmpty() || itemsModelOptional.isEmpty()) {
+            throw new NotFoundException("Usuario, GameServer ou Lista de items não indentificada");
+        }
+
+        if (!itemsModelOptional.get().getPlayer().equals(userModel.get()) || !itemsModelOptional.get().getGameServerModel().equals(gameServerModelOptional.get())) {
+            throw new ForbiddenException("Permição negada");
+        }
+
+        List<ItemModel> itemModelList = this.itemRepository.findByListItem(itemsModelOptional.get());
+
+        return itemModelList.stream()
+                .map(ListItem::convertItemModelInDto)
+                .toList();
+
+    }
+
+    private static ListItemDto convertListModelInDto(ItemsModel itemsModel) {
         ListItemDto listItemDto = new ListItemDto();
         BeanUtils.copyProperties(itemsModel, listItemDto);
         return listItemDto;
+    }
+
+    private static ItemDto convertItemModelInDto(ItemModel itemModel) {
+        ItemDto itemDto = new ItemDto();
+        BeanUtils.copyProperties(itemModel, itemDto);
+        return itemDto;
     }
 
     private void validateUserAdmin(UUID gameServerId, UUID userId) {
