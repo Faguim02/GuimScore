@@ -17,6 +17,13 @@ public class DataDto {
     private UserModel player;
     private GameServerModel gameServerModel;
 
+    public DataDto(String nameData, Integer value, Integer maxValue, Integer minValue) {
+        this.nameData = nameData;
+        this.value = value;
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+    }
+
     public DataDto() {
         this.uuid = UUID.randomUUID();
     }
