@@ -32,6 +32,10 @@ public class DataService {
 
         try{
 
+            if (dataDto == null) {
+                throw new NotFoundException("Data inexistente");
+            }
+
             DataModel dataModel = new DataModel();
 
             BeanUtils.copyProperties(dataDto, dataModel);
@@ -45,6 +49,8 @@ public class DataService {
 
             dataModel.setGameServerModel(gameServerModel.get());
             dataModel.setPlayer(userModel.get());
+
+            this.dataRepository.save(dataModel);
 
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
