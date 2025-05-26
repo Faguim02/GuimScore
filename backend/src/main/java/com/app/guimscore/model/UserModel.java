@@ -26,12 +26,10 @@ public class UserModel implements UserDetails {
     private UserRole userRole;
     private GameServerModel gameServerModel;
 
-    public UserModel(String name, String email, String password, String avatar) {
+    public UserModel(String name, String email) {
         this.uuid = UUID.randomUUID();
         this.name = name;
         this.email = email;
-        this.password = password;
-        this.avatar = avatar;
     }
 
     public UserModel() {

@@ -18,7 +18,7 @@ public class GameServerModel {
     private Date dateAt;
     private UserModel user;
 
-    public GameServerModel(UUID uuid, String nameServer, String description, Date dateUpdate, Date dateAt) {
+    public GameServerModel(String nameServer, String description) {
         this.uuid = UUID.randomUUID();
         this.nameServer = nameServer;
         this.description = description;
