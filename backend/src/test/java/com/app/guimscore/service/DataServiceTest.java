@@ -4,6 +4,7 @@ import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
 import com.app.guimscore.repository.UserRepository;
@@ -52,6 +53,17 @@ public class DataServiceTest {
             dataService.createData(dataDto, userModel.getUuid(), gameServerModel.getUuid());
 
             Mockito.verify(dataRepository, Mockito.times(1)).save(Mockito.any(DataModel.class));
+        }
+
+        @Test
+        @DisplayName("shoul return Not Found Exception")
+        void shouldReturnNotFoundException() {
+
+            UserModel userModel = new UserModel("Fagner", "f@");
+            GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.createData(null, userModel.getUuid(), gameServerModel.getUuid()));
+
         }
 
     }
