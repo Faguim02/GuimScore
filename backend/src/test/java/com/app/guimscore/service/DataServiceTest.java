@@ -4,6 +4,7 @@ import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
@@ -46,6 +47,7 @@ public class DataServiceTest {
             UserModel userModel = new UserModel("Fagner", "f@");
             GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
             DataDto dataDto = new DataDto("Life", 100, 100, 0);
+            gameServerModel.setUser(userModel);
 
             Mockito.when(gameServerRepository.findById(gameServerModel.getUuid())).thenReturn(Optional.of(gameServerModel));
             Mockito.when(userRepository.findById(userModel.getUuid())).thenReturn(Optional.of(userModel));
@@ -56,14 +58,55 @@ public class DataServiceTest {
         }
 
         @Test
-        @DisplayName("shoul return Not Found Exception")
-        void shouldReturnNotFoundException() {
+        @DisplayName("should return Not Found Exception when Data equals a null")
+        void shouldReturnNotFoundExceptionWhenDataEqualsANull() {
 
             UserModel userModel = new UserModel("Fagner", "f@");
             GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
 
             Assertions.assertThrows(NotFoundException.class, () -> dataService.createData(null, userModel.getUuid(), gameServerModel.getUuid()));
 
+        }
+
+        @Test
+        @DisplayName("should return Not Found Exception when 'userModel' is empty")
+        void shouldReturnNotFoundExceptionUserModel() {
+
+            UserModel userModel = new UserModel("Fagner", "f@");
+            GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
+            DataDto dataDto = new DataDto("Life", 100, 100, 0);
+
+            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.createData(dataDto, userModel.getUuid(), gameServerModel.getUuid()));
+        }
+
+        @Test
+        @DisplayName("should return Not Found Exception when 'gameServerModel' is empty")
+        void shouldReturnNotFoundExceptionGameServerModel() {
+
+            UserModel userModel = new UserModel("Fagner", "f@");
+            GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
+            DataDto dataDto = new DataDto("Life", 100, 100, 0);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.createData(dataDto, userModel.getUuid(), gameServerModel.getUuid()));
+        }
+
+        @Test
+        @DisplayName("should return forbidden")
+        void shouldReturnForbidden() {
+            UserModel userModel = new UserModel("Fagner", "f@");
+            UserModel userModel2 = new UserModel();
+            GameServerModel gameServerModel = new GameServerModel("CatStolen", "Jogo de aventura");
+            DataDto dataDto = new DataDto("Life", 100, 100, 0);
+            gameServerModel.setUser(userModel2);
+
+            Mockito.when(gameServerRepository.findById(gameServerModel.getUuid())).thenReturn(Optional.of(gameServerModel));
+            Mockito.when(userRepository.findById(userModel.getUuid())).thenReturn(Optional.of(userModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.createData(dataDto, userModel.getUuid(), gameServerModel.getUuid()));
         }
 
     }
