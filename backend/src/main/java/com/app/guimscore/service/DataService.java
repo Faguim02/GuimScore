@@ -47,6 +47,10 @@ public class DataService {
                 throw new NotFoundException("usuario ou gameServer inexistente");
             }
 
+            if (!gameServerModel.get().getUser().equals(userModel.get())) {
+                throw new ForbiddenException("Acesso negado");
+            }
+
             dataModel.setGameServerModel(gameServerModel.get());
             dataModel.setPlayer(userModel.get());
 
@@ -54,6 +58,8 @@ public class DataService {
 
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
         }
         catch (Exception e) {
             throw new RuntimeException(e);
