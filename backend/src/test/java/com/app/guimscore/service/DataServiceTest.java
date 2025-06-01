@@ -140,6 +140,15 @@ public class DataServiceTest {
 
         }
 
+        @Test
+        @DisplayName("should return NotFoundException, is gameserver not found")
+        void shouldReturnNotFound() {
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.findAllDatas(UUID.randomUUID(), UUID.randomUUID()));
+        }
+
     }
 
 }
