@@ -78,7 +78,7 @@ public class DataService {
                 throw new NotFoundException("GameServer inexistente");
             }
 
-            if (gameServerModel.get().getUser().getUuid().equals(userId)) {
+            if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
                 throw new ForbiddenException("Não authorizado");
             }
 
