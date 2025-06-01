@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -107,6 +108,36 @@ public class DataServiceTest {
             Mockito.when(userRepository.findById(userModel.getUuid())).thenReturn(Optional.of(userModel));
 
             Assertions.assertThrows(ForbiddenException.class, () -> dataService.createData(dataDto, userModel.getUuid(), gameServerModel.getUuid()));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("function 'findAllData()'")
+    class FindAllData {
+
+        @Test
+        @DisplayName("should return list from data")
+        void shouldReturnListFromData() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            DataModel lifeData = new DataModel("life", 100, 100, 0);
+            DataModel energy = new DataModel("energy", 0, 100, 0);
+            lifeData.setGameServerModel(gameServerModel);
+            energy.setGameServerModel(gameServerModel);
+            List<DataModel> dataModelList = List.of(lifeData, energy);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+            Mockito.when(dataRepository.findByGameServerModel(Mockito.any(GameServerModel.class))).thenReturn(dataModelList);
+
+            List<DataDto> dataDtoList = dataService.findAllDatas(userModel.getUuid(), gameServerModel.getUuid());
+
+            Assertions.assertEquals(2, dataDtoList.size());
+
+
         }
 
     }
