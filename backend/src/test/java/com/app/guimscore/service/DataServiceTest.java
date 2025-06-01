@@ -149,6 +149,20 @@ public class DataServiceTest {
             Assertions.assertThrows(NotFoundException.class, () -> dataService.findAllDatas(UUID.randomUUID(), UUID.randomUUID()));
         }
 
+        @Test
+        @DisplayName("should retun ForbiddenException")
+        void shouldReturnForbiddenException() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.findAllDatas(UUID.randomUUID(), gameServerModel.getUuid()));
+
+        }
+
     }
 
 }
