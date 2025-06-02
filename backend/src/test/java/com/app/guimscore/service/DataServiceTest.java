@@ -165,4 +165,30 @@ public class DataServiceTest {
 
     }
 
+    @Nested
+    @DisplayName("function 'findDataById()'")
+    class FindDataById {
+
+        @Test
+        @DisplayName("should return Data")
+        void shouldReturnData() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            DataDto dataDto = dataService.findDataById(UUID.randomUUID(), userModel.getUuid(), gameServerModel.getUuid());
+
+            Assertions.assertEquals("life", dataDto.getNameData());
+            Assertions.assertEquals(100, dataDto.getMaxValue());
+        }
+
+    }
+
 }
