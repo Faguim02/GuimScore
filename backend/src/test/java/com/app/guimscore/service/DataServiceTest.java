@@ -296,6 +296,18 @@ public class DataServiceTest {
 
         }
 
+        @Test
+        @DisplayName("should return not found")
+        void shouldReturnNotFound() {
+
+            DataDto dataDto = new DataDto();
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.updateData(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), dataDto));
+
+        }
+
     }
 
 }
