@@ -308,6 +308,25 @@ public class DataServiceTest {
 
         }
 
+        @Test
+        @DisplayName("should return forbidden")
+        void shouldReturnForbidden() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+            DataDto dataDto = new DataDto();
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.updateData(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), dataDto));
+
+        }
+
     }
 
 }
