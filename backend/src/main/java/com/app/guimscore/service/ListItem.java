@@ -91,7 +91,7 @@ public class ListItem {
 
         this.validateUserAdmin(gameServerId, userId);
 
-        ItemsModel itemsModel = new ItemsModel();
+        ItemsModel itemsModel = itemsRepository.findById(listId).get();
 
         BeanUtils.copyProperties(listItemDto, itemsModel);
 
@@ -215,7 +215,7 @@ public class ListItem {
             throw new NotFoundException("GameServer inexistente");
         }
 
-        if (gameServerModelOptional.get().getUser().getUuid().equals(userId)) {
+        if (!gameServerModelOptional.get().getUser().getUuid().equals(userId)) {
             throw new ForbiddenException("Acesso negado");
         }
     }
