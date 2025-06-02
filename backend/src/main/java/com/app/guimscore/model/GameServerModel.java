@@ -18,6 +18,14 @@ public class GameServerModel {
     private Date dateAt;
     private UserModel user;
 
+    public GameServerModel(String nameServer, String description) {
+        this.uuid = UUID.randomUUID();
+        this.nameServer = nameServer;
+        this.description = description;
+        this.dateUpdate = new Date();
+        this.dateAt = new Date();
+    }
+
     public GameServerModel() {
         this.uuid = UUID.randomUUID();
         this.dateAt = new Date();

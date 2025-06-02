@@ -15,6 +15,12 @@ public class ItemModel {
     private String itemDescription;
     private ItemsModel listItem;
 
+    public ItemModel(String itemName, String itemDescription) {
+        this.uuid = UUID.randomUUID();
+        this.itemName = itemName;
+        this.itemDescription = itemDescription;
+    }
+
     public ItemModel() {
         this.uuid = UUID.randomUUID();
     }

@@ -11,6 +11,11 @@ public class ItemsModel {
     private GameServerModel gameServerModel;
     private UserModel player;
 
+    public ItemsModel(UUID uuid, String listName) {
+        this.uuid = uuid;
+        this.listName = listName;
+    }
+
     public ItemsModel() {
         this.uuid = UUID.randomUUID();
     }

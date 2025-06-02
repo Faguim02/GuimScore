@@ -21,6 +21,14 @@ public class DataModel {
     @NotNull(message = "É necessario saber a referencia do servidor")
     private GameServerModel gameServerModel;
 
+    public DataModel(String nameData, Integer value, Integer maxValue, Integer minValue) {
+        this.uuid = UUID.randomUUID();
+        this.nameData = nameData;
+        this.value = value;
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+    }
+
     public DataModel() {
         this.uuid = UUID.randomUUID();
     }

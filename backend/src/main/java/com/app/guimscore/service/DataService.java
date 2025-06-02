@@ -32,6 +32,10 @@ public class DataService {
 
         try{
 
+            if (dataDto == null) {
+                throw new NotFoundException("Data inexistente");
+            }
+
             DataModel dataModel = new DataModel();
 
             BeanUtils.copyProperties(dataDto, dataModel);
@@ -43,11 +47,19 @@ public class DataService {
                 throw new NotFoundException("usuario ou gameServer inexistente");
             }
 
+            if (!gameServerModel.get().getUser().equals(userModel.get())) {
+                throw new ForbiddenException("Acesso negado");
+            }
+
             dataModel.setGameServerModel(gameServerModel.get());
             dataModel.setPlayer(userModel.get());
 
+            this.dataRepository.save(dataModel);
+
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -66,7 +78,7 @@ public class DataService {
                 throw new NotFoundException("GameServer inexistente");
             }
 
-            if (gameServerModel.get().getUser().getUuid().equals(userId)) {
+            if (!gameServerModel.get().getUser().getUuid().equals(userId)) {
                 throw new ForbiddenException("Não authorizado");
             }
 
