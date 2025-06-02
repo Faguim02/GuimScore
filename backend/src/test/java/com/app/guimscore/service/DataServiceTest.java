@@ -219,4 +219,56 @@ public class DataServiceTest {
 
     }
 
+    @Nested
+    @DisplayName("function 'deleteData()'")
+    class DeleteData {
+
+        @Test
+        @DisplayName("should delete a data")
+        void shouldDeleteAData() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            dataService.deleteDataById(UUID.randomUUID(), userModel.getUuid(), gameServerModel.getUuid());
+
+            Mockito.verify(dataRepository, Mockito.times(1)).delete(Mockito.any(DataModel.class));
+
+        }
+
+        @Test
+        @DisplayName("should return not found")
+        void returnNotFoundException() {
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.deleteDataById(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
+
+        }
+
+        @Test
+        @DisplayName("should return forbidden")
+        void shouldReturnForbidden() {
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.deleteDataById(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
+        }
+
+    }
+
 }
