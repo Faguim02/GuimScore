@@ -189,6 +189,34 @@ public class DataServiceTest {
             Assertions.assertEquals(100, dataDto.getMaxValue());
         }
 
+        @Test
+        @DisplayName("should return NotFound Exception")
+        void shouldReturnNotFoundException() {
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.findDataById(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
+
+        }
+
+        @Test
+        @DisplayName("should return FobiddenException")
+        void shouldReturnForbidden() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.findDataById(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
+
+        }
+
     }
 
 }
