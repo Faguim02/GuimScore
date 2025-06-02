@@ -271,4 +271,31 @@ public class DataServiceTest {
 
     }
 
+    @Nested
+    @DisplayName("function 'updateData()'")
+    class UpdateData {
+
+        @Test
+        @DisplayName("should update data")
+        void shouldUpdateData() {
+
+            GameServerModel gameServerModel = new GameServerModel("Mario", "plataform 2d");
+            UserModel userModel = new UserModel("fagner", "aa@aa");
+            gameServerModel.setUser(userModel);
+            DataDto dataDto = new DataDto();
+
+            DataModel dataModel = new DataModel("life", 100, 100, 0);
+            dataModel.setPlayer(userModel);
+            dataModel.setGameServerModel(gameServerModel);
+
+            Mockito.when(dataRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(dataModel));
+
+            dataService.updateData(UUID.randomUUID(), userModel.getUuid(), gameServerModel.getUuid(), dataDto);
+
+            Mockito.verify(dataRepository, Mockito.times(1)).save(Mockito.any(DataModel.class));
+
+        }
+
+    }
+
 }
