@@ -3,10 +3,12 @@ package com.app.guimscore.view.controller;
 import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.service.GameServerService;
+import com.app.guimscore.view.model.GameServerDetailsDto;
 import com.app.guimscore.view.model.GameServerReqDto;
 import com.app.guimscore.view.model.GameServerResDto;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,20 @@ public class GameServerController {
         return ResponseEntity.ok(gameServerResDtoList);
 
     }
+
+    @GetMapping("{id}")
+    ResponseEntity<GameServerDetailsDto> findGameServerDetails(Authentication authentication, @PathParam("id") UUID gameId) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        GameServerDto gameServerDto = this.gameServerService.findGameServerById(userId, gameId);
+
+        GameServerDetailsDto gameServerDetailsDto = new GameServerDetailsDto(gameServerDto.getUuid(), gameServerDto.getNameServer(), gameServerDto.getDescription(), gameServerDto.getDateAt(), null, null);
+
+        return ResponseEntity.ok(gameServerDetailsDto);
+
+    }
+
 
 
 }
