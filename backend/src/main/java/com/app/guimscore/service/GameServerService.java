@@ -5,16 +5,17 @@ import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
-import com.app.guimscore.model.roles.UserRole;
 import com.app.guimscore.repository.GameServerRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class GameServerService {
 
     @Autowired
