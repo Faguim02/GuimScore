@@ -6,9 +6,6 @@ import com.app.guimscore.service.GameServerService;
 import com.app.guimscore.view.model.GameServerDetailsDto;
 import com.app.guimscore.view.model.GameServerReqDto;
 import com.app.guimscore.view.model.GameServerResDto;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +53,7 @@ public class GameServerController {
     }
 
     @GetMapping("{id}")
-    ResponseEntity<GameServerDetailsDto> findGameServerDetails(Authentication authentication, @PathParam("id") UUID gameId) {
+    ResponseEntity<GameServerDetailsDto> findGameServerDetails(Authentication authentication, @PathVariable("id") UUID gameId) {
 
         UUID userId = this.jwtService.getUserIdByToken(authentication);
 
@@ -68,6 +65,14 @@ public class GameServerController {
 
     }
 
+    @DeleteMapping("{id}")
+    ResponseEntity<String> deleteGameServer(Authentication authentication, @PathVariable("id") UUID gameServerId) {
 
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        this.gameServerService.deleteGameServer(userId, gameServerId);
+
+        return ResponseEntity.ok("GameServer deletado com sucesso");
+    }
 
 }
