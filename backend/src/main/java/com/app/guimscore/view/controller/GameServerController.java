@@ -75,4 +75,17 @@ public class GameServerController {
         return ResponseEntity.ok("GameServer deletado com sucesso");
     }
 
+    @PutMapping("{id}")
+    ResponseEntity<String> updateGameServer(Authentication authentication, @RequestBody GameServerReqDto gameServerReqDto, @PathVariable("id") UUID gameServerId) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        GameServerDto gameServerDto = new GameServerDto(gameServerReqDto.nameServer(), gameServerReqDto.description());
+
+        this.gameServerService.updateGameServer(userId, gameServerId, gameServerDto);
+
+        return ResponseEntity.ok("GameServer autalizado com sucesso");
+
+    }
+
 }
