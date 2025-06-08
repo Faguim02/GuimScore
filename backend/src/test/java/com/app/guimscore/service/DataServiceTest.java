@@ -18,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -133,7 +132,7 @@ public class DataServiceTest {
             Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
             Mockito.when(dataRepository.findByGameServerModel(Mockito.any(GameServerModel.class))).thenReturn(dataModelList);
 
-            List<DataDto> dataDtoList = dataService.findAllDatas(userModel.getUuid(), gameServerModel.getUuid());
+            List<DataDto> dataDtoList = dataService.findAllData(userModel.getUuid(), gameServerModel.getUuid());
 
             Assertions.assertEquals(2, dataDtoList.size());
 
@@ -146,7 +145,7 @@ public class DataServiceTest {
 
             Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
 
-            Assertions.assertThrows(NotFoundException.class, () -> dataService.findAllDatas(UUID.randomUUID(), UUID.randomUUID()));
+            Assertions.assertThrows(NotFoundException.class, () -> dataService.findAllData(UUID.randomUUID(), UUID.randomUUID()));
         }
 
         @Test
@@ -159,7 +158,7 @@ public class DataServiceTest {
 
             Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
-            Assertions.assertThrows(ForbiddenException.class, () -> dataService.findAllDatas(UUID.randomUUID(), gameServerModel.getUuid()));
+            Assertions.assertThrows(ForbiddenException.class, () -> dataService.findAllData(UUID.randomUUID(), gameServerModel.getUuid()));
 
         }
 
