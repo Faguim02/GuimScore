@@ -1,7 +1,6 @@
 package com.app.guimscore.service;
 
 import com.app.guimscore.dto.DataDto;
-import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
@@ -140,7 +139,7 @@ public class DataService {
     void updateData(UUID dataId, UUID userId, UUID gameServerId, DataDto dataDto) {
         try {
 
-            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
+            this.validateAccessToData(dataId, userId, gameServerId);
 
             DataModel newData = new DataModel();
 

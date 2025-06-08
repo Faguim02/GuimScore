@@ -15,6 +15,15 @@ public class GameServerDto {
     private Date dateAt;
     private UserModel user;
 
+    public GameServerDto(String nameServer, String description) {
+        this.nameServer = nameServer;
+        this.description = description;
+    }
+
+    public GameServerDto() {
+
+    }
+
     public UUID getUuid() {
         return uuid;
     }

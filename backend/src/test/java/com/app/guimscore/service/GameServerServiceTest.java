@@ -1,6 +1,7 @@
 package com.app.guimscore.service;
 
 import com.app.guimscore.dto.GameServerDto;
+import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.exceptions.ForbiddenException;
@@ -167,6 +168,8 @@ public class GameServerServiceTest {
 
         gameServerService.deleteGameServer(uuid, uuid);
 
+        Mockito.verify(gameServerRepository, Mockito.times(1)).delete(Mockito.any(GameServerModel.class));
+
     }
 
     @DisplayName("should update a gameServer")
@@ -185,6 +188,8 @@ public class GameServerServiceTest {
         Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
         gameServerService.updateGameServer(uuid, uuid, gameServerDto);
+
+        Mockito.verify(gameServerRepository, Mockito.times(1)).save(Mockito.any(GameServerModel.class));
     }
 
 }
