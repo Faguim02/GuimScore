@@ -4,12 +4,14 @@ import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.service.DataService;
 import com.app.guimscore.view.model.DataReqDto;
+import com.app.guimscore.view.model.DataResDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,7 +26,7 @@ public class DataController {
     @PostMapping()
     ResponseEntity<String> createData(@RequestBody DataReqDto dataReqDto,
                                       Authentication authentication,
-                                      @RequestParam("game-id")UUID gameId
+                                      @RequestParam("game-id") UUID gameId
     ) {
 
         UUID userId = this.jwtService.getUserIdByToken(authentication);
@@ -35,6 +37,20 @@ public class DataController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Um novo dado foi criado");
 
+    }
+
+    @GetMapping()
+    ResponseEntity<List<DataResDto>> findAllData(Authentication authentication, @RequestParam("game-id") UUID gameId) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        List<DataDto> dataDtoList = this.dataService.findAllData(userId, gameId);
+
+        List<DataResDto> dataResDtoList = dataDtoList.stream()
+                .map(data -> new DataResDto(data.getUuid(), data.getNameData()))
+                .toList();
+
+        return ResponseEntity.ok(dataResDtoList);
     }
 
 }
