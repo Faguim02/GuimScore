@@ -27,7 +27,7 @@ public class DataService {
     @Autowired
     private GameServerRepository gameServerRepository;
 
-    void createData(DataDto dataDto, UUID userId, UUID gameServerId) {
+    public void createData(DataDto dataDto, UUID userId, UUID gameServerId) {
 
         try{
 
@@ -67,7 +67,7 @@ public class DataService {
 
     }
 
-    List<DataDto> findAllDatas(UUID userId, UUID gameServerId) {
+    public List<DataDto> findAllData(UUID userId, UUID gameServerId) {
 
         try{
 
@@ -98,7 +98,7 @@ public class DataService {
 
     }
 
-    DataDto findDataById(UUID dataId, UUID userId, UUID gameServerId) {
+    public DataDto findDataById(UUID dataId, UUID userId, UUID gameServerId) {
 
         try {
 
@@ -120,7 +120,7 @@ public class DataService {
 
     }
 
-    void deleteDataById(UUID dataId, UUID userId, UUID gameServerId) {
+    public void deleteDataById(UUID dataId, UUID userId, UUID gameServerId) {
         try {
 
             DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
@@ -136,7 +136,7 @@ public class DataService {
         }
     }
 
-    void updateData(UUID dataId, UUID userId, UUID gameServerId, DataDto dataDto) {
+    public void updateData(UUID dataId, UUID userId, UUID gameServerId, DataDto dataDto) {
         try {
 
             this.validateAccessToData(dataId, userId, gameServerId);
