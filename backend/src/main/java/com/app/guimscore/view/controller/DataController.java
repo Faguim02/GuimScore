@@ -67,4 +67,15 @@ public class DataController {
 
     }
 
+    @DeleteMapping()
+    ResponseEntity<String> deleteData(Authentication authentication, @RequestParam("game-id") UUID gameId, @RequestParam("data-id") UUID dataId) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        this.dataService.deleteDataById(dataId, userId, gameId);
+
+        return ResponseEntity.ok("Um dado foi deletado");
+
+    }
+
 }
