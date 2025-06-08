@@ -3,6 +3,7 @@ package com.app.guimscore.view.controller;
 import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.service.DataService;
+import com.app.guimscore.view.model.DataDetailsDto;
 import com.app.guimscore.view.model.DataReqDto;
 import com.app.guimscore.view.model.DataResDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,19 @@ public class DataController {
                 .toList();
 
         return ResponseEntity.ok(dataResDtoList);
+    }
+
+    @GetMapping()
+    ResponseEntity<DataDetailsDto> findDataById(Authentication authentication, @RequestParam("game-id") UUID gameId, @RequestParam("data-id") UUID dataId) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        DataDto dataDto = this.dataService.findDataById(dataId, userId, gameId);
+
+        DataDetailsDto dataDetailsDto = new DataDetailsDto(dataDto.getUuid(), dataDto.getNameData(), dataDto.getValue(), dataDto.getMaxValue(), dataDto.getMinValue());
+
+        return ResponseEntity.ok(dataDetailsDto);
+
     }
 
 }
