@@ -85,21 +85,19 @@ public class GameServerService {
         }
     }
 
-    void deleteGameServer(UUID userId, UUID gameServerId) {
+    public void deleteGameServer(UUID userId, UUID gameServerId) {
         GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
         gameServerRepository.delete(gameServerModel);
 
     }
 
-    void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {
+    public void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {
         GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
-
-        GameServerModel gameServerModelSave = new GameServerModel();
 
         BeanUtils.copyProperties(gameServerDto, gameServerModel);
 
-        this.gameServerRepository.save(gameServerModelSave);
+        this.gameServerRepository.save(gameServerModel);
     }
 
     private GameServerModel isGameServerExistAndAuthorized(UUID userId, UUID gameServerId) {
