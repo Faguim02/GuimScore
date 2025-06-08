@@ -78,4 +78,21 @@ public class DataController {
 
     }
 
+    @PutMapping()
+    ResponseEntity<String> updateData(Authentication authentication,
+                                      @RequestBody DataReqDto dataReqDto,
+                                      @RequestParam("game-id") UUID gameId,
+                                      @RequestParam("data-id") UUID dataId
+    ) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        DataDto dataDto = new DataDto(dataReqDto.nameData(), dataReqDto.value(), dataReqDto.maxValue(), dataReqDto.minValue());
+
+        this.dataService.updateData(dataId, userId, gameId, dataDto);
+
+        return ResponseEntity.ok("Um dado foi atualizado");
+
+    }
+
 }
