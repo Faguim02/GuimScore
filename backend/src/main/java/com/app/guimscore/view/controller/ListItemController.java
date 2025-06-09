@@ -1,10 +1,16 @@
 package com.app.guimscore.view.controller;
 
+import com.app.guimscore.dto.ListItemDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.service.ListItem;
+import com.app.guimscore.view.model.ListItemReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("list")
@@ -15,6 +21,20 @@ public class ListItemController {
     @Autowired
     private ListItem listItem;
 
+    @PostMapping()
+    ResponseEntity<String> createListItem(Authentication authentication,
+                                          @RequestBody ListItemReqDto listItemReqDto,
+                                          @RequestParam("game-id") UUID gameId
+                                          ) {
 
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        ListItemDto listItemDto = new ListItemDto(listItemReqDto.listName());
+
+        this.listItem.createListItem(listItemDto, userId, gameId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Lista de items criada");
+
+    }
 
 }
