@@ -32,7 +32,7 @@ public class ListItem {
     @Autowired
     private UserRepository userRepository;
 
-    void createListItem(ListItemDto listItemDto, UUID userId, UUID gameServerId) {
+    public void createListItem(ListItemDto listItemDto, UUID userId, UUID gameServerId) {
 
         Optional<UserModel> userModelOptional = this.userRepository.findById(userId);
         Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
@@ -48,7 +48,7 @@ public class ListItem {
         this.itemsRepository.save(itemsModel);
     }
 
-    List<ListItemDto> findAllLists(UUID gameServerId, UUID userId) {
+    public List<ListItemDto> findAllLists(UUID gameServerId, UUID userId) {
 
         Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);
         Optional<UserModel> userModelOptional = this.userRepository.findById(userId);
@@ -69,7 +69,7 @@ public class ListItem {
 
     }
 
-    ListItemDto findListById(UUID listId, UUID gameServerId, UUID userId) {
+    public ListItemDto findListById(UUID listId, UUID gameServerId, UUID userId) {
 
         this.validateUserAdmin(gameServerId, userId);
 
@@ -87,7 +87,7 @@ public class ListItem {
 
     }
 
-    void updateList(ListItemDto listItemDto, UUID listId, UUID gameServerId, UUID userId) {
+    public void updateList(ListItemDto listItemDto, UUID listId, UUID gameServerId, UUID userId) {
 
         this.validateUserAdmin(gameServerId, userId);
 
@@ -99,7 +99,7 @@ public class ListItem {
 
     }
 
-    void deleteList(UUID listId, UUID gameServerId, UUID userId) {
+    public void deleteList(UUID listId, UUID gameServerId, UUID userId) {
 
         this.validateUserAdmin(gameServerId, userId);
 
@@ -108,7 +108,7 @@ public class ListItem {
     }
 
     // Funções referentes a unidade dos itemns (Interação do player)
-    void addItem(ItemDto itemDto, UUID listItemId, UUID userId, UUID gameServerId) {
+    public void addItem(ItemDto itemDto, UUID listItemId, UUID userId, UUID gameServerId) {
 
         Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
         Optional<UserModel> userModel = this.userRepository.findById(userId);
@@ -130,7 +130,7 @@ public class ListItem {
         this.itemRepository.save(itemModel);
     }
 
-    void removerItem(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
+    public void removerItem(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
 
         Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
         Optional<UserModel> userModel = this.userRepository.findById(userId);
@@ -148,7 +148,7 @@ public class ListItem {
 
     }
 
-    List<ItemDto> findAllItems(UUID listItemId, UUID userId, UUID gameServerId) {
+    public List<ItemDto> findAllItems(UUID listItemId, UUID userId, UUID gameServerId) {
 
         Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
         Optional<UserModel> userModel = this.userRepository.findById(userId);
@@ -170,7 +170,7 @@ public class ListItem {
 
     }
 
-    ItemDto findItemById(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
+    public ItemDto findItemById(UUID itemId, UUID listItemId, UUID userId, UUID gameServerId) {
         Optional<ItemsModel> itemsModelOptional = this.itemsRepository.findById(listItemId);
         Optional<UserModel> userModel = this.userRepository.findById(userId);
         Optional<GameServerModel> gameServerModelOptional = this.gameServerRepository.findById(gameServerId);

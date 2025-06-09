@@ -10,6 +10,14 @@ public class ItemDto {
     private String itemDescription;
     private ItemsModel listItem;
 
+    public ItemDto() {
+    }
+
+    public ItemDto(String itemName, String itemDescription) {
+        this.itemName = itemName;
+        this.itemDescription = itemDescription;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
