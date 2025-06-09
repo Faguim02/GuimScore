@@ -82,4 +82,21 @@ public class ListItemController {
 
     }
 
+    @PutMapping()
+    ResponseEntity<String> updateList(Authentication authentication,
+                                      @RequestBody ListItemReqDto listItemReqDto,
+                                      @RequestParam("game-id") UUID gameId,
+                                      @RequestParam("list-id") UUID listId
+    ) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        ListItemDto listItemDto = new ListItemDto(listItemReqDto.listName());
+
+        this.listItem.updateList(listItemDto, listId, gameId, userId);
+
+        return ResponseEntity.ok("Lista Autalizada com sucesso");
+
+    }
+
 }
