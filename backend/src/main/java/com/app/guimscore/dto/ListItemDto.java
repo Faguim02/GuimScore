@@ -11,6 +11,13 @@ public class ListItemDto {
     private GameServerModel gameServerModel;
     private UserModel player;
 
+    public ListItemDto() {
+    }
+
+    public ListItemDto(String listName) {
+        this.listName = listName;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
