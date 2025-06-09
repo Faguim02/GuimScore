@@ -1,10 +1,10 @@
 package com.app.guimscore.view.controller;
 
+import com.app.guimscore.dto.ItemDto;
 import com.app.guimscore.dto.ListItemDto;
 import com.app.guimscore.infra.security.JwtService;
 import com.app.guimscore.service.ListItem;
-import com.app.guimscore.view.model.ListItemReqDto;
-import com.app.guimscore.view.model.ListItemResDto;
+import com.app.guimscore.view.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +97,74 @@ public class ListItemController {
 
         return ResponseEntity.ok("Lista Autalizada com sucesso");
 
+    }
+
+    // METÓDOS DESTINADOS PARA USUARIOS/PLAYERS
+    @PostMapping("/items")
+    public ResponseEntity<String> addItem(
+            Authentication authentication,
+            @RequestBody ItemReqDto itemReqDto,
+            @RequestParam("list-id") UUID listItemId,
+            @RequestParam("game-id") UUID gameServerId
+    ) {
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        ItemDto itemDto = new ItemDto(itemReqDto.itemName(), itemReqDto.itemDescription());
+
+        this.listItem.addItem(itemDto, listItemId, userId, gameServerId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Item adicionado com sucesso");
+    }
+
+    @DeleteMapping("/items/{itemId}")
+    public ResponseEntity<String> removeItem(
+            Authentication authentication,
+            @PathVariable("itemId") UUID itemId,
+            @RequestParam("list-id") UUID listItemId,
+            @RequestParam("game-id") UUID gameServerId
+    ) {
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        this.listItem.removerItem(itemId, listItemId, userId, gameServerId);
+
+        return ResponseEntity.ok("Item removido com sucesso");
+    }
+
+    @GetMapping("/items")
+    public ResponseEntity<List<ItemResDto>> getAllItems(
+            Authentication authentication,
+            @RequestParam("list-id") UUID listItemId,
+            @RequestParam("game-id") UUID gameServerId
+    ) {
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        List<ItemDto> items = this.listItem.findAllItems(listItemId, userId, gameServerId);
+
+        List<ItemResDto> resDtos = items.stream()
+                .map(i -> new ItemResDto(i.getUuid(), i.getItemName()))
+                .toList();
+
+        return ResponseEntity.ok(resDtos);
+    }
+
+    @GetMapping("/items/{itemId}")
+    public ResponseEntity<ItemDetailsResDto> getItemById(
+            Authentication authentication,
+            @PathVariable("itemId") UUID itemId,
+            @RequestParam("list-id") UUID listItemId,
+            @RequestParam("game-id") UUID gameServerId
+    ) {
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        ItemDto itemDto = this.listItem.findItemById(itemId, listItemId, userId, gameServerId);
+
+        ItemDetailsResDto resDto = new ItemDetailsResDto(
+                itemDto.getUuid(),
+                itemDto.getItemName(),
+                itemDto.getItemDescription()
+        );
+
+        return ResponseEntity.ok(resDto);
     }
 
 }
