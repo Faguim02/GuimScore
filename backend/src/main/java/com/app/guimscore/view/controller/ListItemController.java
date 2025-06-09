@@ -68,4 +68,18 @@ public class ListItemController {
         return ResponseEntity.ok(listItemResDto);
     }
 
+    @DeleteMapping()
+    ResponseEntity<String> deleteList(Authentication authentication,
+                                      @RequestParam("game-id") UUID gameId,
+                                      @RequestParam("list-id") UUID listId
+    ) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        this.listItem.deleteList(listId, gameId, userId);
+
+        return ResponseEntity.ok("Lista deletada com sucesso!");
+
+    }
+
 }
