@@ -53,4 +53,19 @@ public class ListItemController {
         return ResponseEntity.ok(listItemResDto);
     }
 
+    @GetMapping()
+    ResponseEntity<ListItemResDto> findListItemById(Authentication authentication,
+                                                          @RequestParam("game-id") UUID gameId,
+                                                          @RequestParam("listId") UUID listId
+    ) {
+
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        ListItemDto listItemDto = this.listItem.findListById(listId, gameId, userId);
+
+        ListItemResDto listItemResDto = new ListItemResDto(listItemDto.getUuid(), listItemDto.getListName());
+
+        return ResponseEntity.ok(listItemResDto);
+    }
+
 }
