@@ -1,5 +1,6 @@
 package com.app.guimscore.service;
 
+import com.app.guimscore.model.exceptions.UnprocessableEntityException;
 import com.app.guimscore.view.model.SignInResDto;
 import com.app.guimscore.view.model.SignUpResDto;
 import com.app.guimscore.dto.UserDto;
@@ -30,6 +31,12 @@ public class AuthService {
     private JwtService jwtService;
 
     public SignUpResDto signUp(UserDto userDto) {
+
+        long amountUsers = this.userRepository.count();
+
+        if (amountUsers >= 10) {
+            throw new UnprocessableEntityException("Limite de usuarios atingidos");
+        }
 
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
