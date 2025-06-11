@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface ItemsRepository extends MongoRepository<ItemsModel, UUID> {
 
     List<ItemsModel> findByGameServerModel(GameServerModel gameServerModel);
+
+    void deleteByGameServerModel(GameServerModel gameServerModel);
 }

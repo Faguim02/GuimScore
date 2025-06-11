@@ -88,4 +88,13 @@ public class GameServerController {
 
     }
 
+    @DeleteMapping("{id}")
+    ResponseEntity<String> deleteGameServerFull(Authentication authentication, @PathVariable("id") UUID gameServerId) {
+        UUID userId = this.jwtService.getUserIdByToken(authentication);
+
+        this.gameServerService.deleteGameServerFull(userId, gameServerId);
+
+        return ResponseEntity.ok("GameServer deletado com sucesso");
+    }
+
 }

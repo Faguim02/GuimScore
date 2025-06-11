@@ -1,11 +1,16 @@
 package com.app.guimscore.service;
 
 import com.app.guimscore.dto.GameServerDto;
+import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
+import com.app.guimscore.model.ItemsModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ConflictException;
 import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
+import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
+import com.app.guimscore.repository.ItemsRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,10 @@ public class GameServerService {
 
     @Autowired
     private GameServerRepository gameServerRepository;
+    @Autowired
+    private DataRepository dataRepository;
+    @Autowired
+    private ItemsRepository itemsRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -88,8 +97,22 @@ public class GameServerService {
     public void deleteGameServer(UUID userId, UUID gameServerId) {
         GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
+        List<DataModel> dataModelList = this.dataRepository.findByGameServerModel(gameServerModel);
+        List<ItemsModel> itemsModelList = this.itemsRepository.findByGameServerModel(gameServerModel);
+
+        if (!dataModelList.isEmpty() || !itemsModelList.isEmpty()) {
+            throw  new ConflictException("Deseja deletar o GameServer com todos os dados dentro?");
+        }
+
         gameServerRepository.delete(gameServerModel);
 
+    }
+
+    public void deleteGameServerFull(UUID userId, UUID gameServerId) {
+        GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
+
+        this.itemsRepository.deleteByGameServerModel(gameServerModel);
+        this.dataRepository.deleteByGameServerModel(gameServerModel);
     }
 
     public void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {

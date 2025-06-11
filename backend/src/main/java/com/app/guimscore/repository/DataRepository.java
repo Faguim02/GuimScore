@@ -14,4 +14,6 @@ public interface DataRepository extends MongoRepository<DataModel, UUID> {
 
     List<DataModel> findByGameServerModel(GameServerModel gameServerModel);
 
+    void deleteByGameServerModel(GameServerModel gameServerModel);
+
 }

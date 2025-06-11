@@ -1,10 +1,7 @@
 package com.app.guimscore.handler;
 
 import com.app.guimscore.model.error.ErrorMessage;
-import com.app.guimscore.model.exceptions.BadRequestException;
-import com.app.guimscore.model.exceptions.ConflictException;
-import com.app.guimscore.model.exceptions.ForbiddenException;
-import com.app.guimscore.model.exceptions.NotFoundException;
+import com.app.guimscore.model.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,5 +32,11 @@ public class RestExceptionController {
     public ResponseEntity<ErrorMessage> conflictException(ConflictException conflictException) {
         ErrorMessage errorMessage = new ErrorMessage("conflict", conflictException.getMessage(), HttpStatus.CONFLICT.value());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+    }
+
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ResponseEntity<ErrorMessage> unprocessableEntityException(UnprocessableEntityException unprocessableEntityException) {
+        ErrorMessage errorMessage = new ErrorMessage("unprocessable entity", unprocessableEntityException.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorMessage);
     }
 }
