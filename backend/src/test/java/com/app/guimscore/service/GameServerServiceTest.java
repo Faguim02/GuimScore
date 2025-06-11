@@ -3,10 +3,14 @@ package com.app.guimscore.service;
 import com.app.guimscore.dto.GameServerDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
+import com.app.guimscore.model.ItemsModel;
 import com.app.guimscore.model.UserModel;
+import com.app.guimscore.model.exceptions.ConflictException;
 import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
+import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
+import com.app.guimscore.repository.ItemsRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("game server service")
 public class GameServerServiceTest {
@@ -34,6 +40,10 @@ public class GameServerServiceTest {
     GameServerRepository gameServerRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    ItemsRepository itemsRepository;
+    @Mock
+    DataRepository dataRepository;
 
     @Nested
     @DisplayName("function 'createGameServer()'")
@@ -48,7 +58,7 @@ public class GameServerServiceTest {
             UUID uuid = UUID.randomUUID();
             userModel.setUuid(uuid);
 
-            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(userModel));
+            Mockito.when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(userModel));
 
             Assertions.assertDoesNotThrow(() -> gameServerService.createGameServer(gameServerDto, uuid), RuntimeException.class.getName());
 
@@ -61,7 +71,7 @@ public class GameServerServiceTest {
             GameServerDto gameServerDto = new GameServerDto();
             UUID uuid = UUID.randomUUID();
 
-            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+            Mockito.when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             Assertions.assertThrows(NotFoundException.class, () -> gameServerService.createGameServer(gameServerDto, uuid));
         }
@@ -80,8 +90,8 @@ public class GameServerServiceTest {
             List<GameServerModel> gameServerModelList = new ArrayList<>(List.of(gameServerModel));
             UserModel userModel = new UserModel();
 
-            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(userModel));
-            Mockito.when(gameServerRepository.findByUser(Mockito.any(UserModel.class))).thenReturn(gameServerModelList);
+            Mockito.when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(userModel));
+            Mockito.when(gameServerRepository.findByUser(any(UserModel.class))).thenReturn(gameServerModelList);
 
             List<GameServerDto> gameServerDtos = gameServerService.findAllGameServers(UUID.randomUUID());
 
@@ -97,7 +107,7 @@ public class GameServerServiceTest {
             gameServerModel.setNameServer("game1");
             UserModel userModel = new UserModel();
 
-            Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+            Mockito.when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             Assertions.assertThrows(NotFoundException.class, () -> gameServerService.findAllGameServers(UUID.randomUUID()));
 
@@ -119,7 +129,7 @@ public class GameServerServiceTest {
             userModel.setName("Fulano");
             gameServerModel.setUser(userModel);
 
-            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+            Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
             GameServerDto gameServerDto = gameServerService.findGameServerById(userModel.getUuid(), gameServerModel.getUuid());
 
@@ -137,7 +147,7 @@ public class GameServerServiceTest {
             userModel.setName("Fulano");
             gameServerModel.setUser(userModel);
 
-            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+            Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
             Assertions.assertThrows(ForbiddenException.class, () -> gameServerService.findGameServerById(UUID.randomUUID(), gameServerModel.getUuid()));
         }
@@ -146,7 +156,7 @@ public class GameServerServiceTest {
         @DisplayName("should return not found exception")
         void shouldReturnNotFoundException() {
 
-            Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.empty());
+            Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             Assertions.assertThrows(NotFoundException.class,() -> gameServerService.findGameServerById(UUID.randomUUID(), UUID.randomUUID()));
         }
@@ -164,11 +174,36 @@ public class GameServerServiceTest {
         userModel.setUuid(uuid);
         gameServerModel.setUser(userModel);
 
-        Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+        Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+        Mockito.when(dataRepository.findByGameServerModel(any(GameServerModel.class))).thenReturn(List.of());
+        Mockito.when(itemsRepository.findByGameServerModel(any(GameServerModel.class))).thenReturn(List.of());
 
         gameServerService.deleteGameServer(uuid, uuid);
 
-        Mockito.verify(gameServerRepository, Mockito.times(1)).delete(Mockito.any(GameServerModel.class));
+        Mockito.verify(gameServerRepository, Mockito.times(1)).delete(any(GameServerModel.class));
+
+    }
+
+    @DisplayName("should return conflictException")
+    @Test
+    void shouldReturnConflictException() {
+
+        UUID uuid = UUID.randomUUID();
+        GameServerModel gameServerModel = new GameServerModel();
+        gameServerModel.setUuid(uuid);
+
+        UserModel userModel = new UserModel();
+        userModel.setUuid(uuid);
+        gameServerModel.setUser(userModel);
+
+        ItemsModel itemsModel = new ItemsModel();
+        DataModel dataModel = new DataModel();
+
+        Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+        Mockito.when(dataRepository.findByGameServerModel(any(GameServerModel.class))).thenReturn(List.of(dataModel));
+        Mockito.when(itemsRepository.findByGameServerModel(any(GameServerModel.class))).thenReturn(List.of(itemsModel));
+
+        Assertions.assertThrows(ConflictException.class, () -> gameServerService.deleteGameServer(uuid, uuid));
 
     }
 
@@ -185,11 +220,11 @@ public class GameServerServiceTest {
 
         GameServerDto gameServerDto = new GameServerDto();
 
-        Mockito.when(gameServerRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(gameServerModel));
+        Mockito.when(gameServerRepository.findById(any(UUID.class))).thenReturn(Optional.of(gameServerModel));
 
         gameServerService.updateGameServer(uuid, uuid, gameServerDto);
 
-        Mockito.verify(gameServerRepository, Mockito.times(1)).save(Mockito.any(GameServerModel.class));
+        Mockito.verify(gameServerRepository, Mockito.times(1)).save(any(GameServerModel.class));
     }
 
 }
