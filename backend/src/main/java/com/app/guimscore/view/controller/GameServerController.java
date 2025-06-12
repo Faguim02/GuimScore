@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("game-server")
+@RequestMapping("api/game-server")
 public class GameServerController {
 
     @Autowired

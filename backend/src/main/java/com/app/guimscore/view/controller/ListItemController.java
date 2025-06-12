@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("list")
+@RequestMapping("api/list")
 public class ListItemController {
 
     @Autowired
