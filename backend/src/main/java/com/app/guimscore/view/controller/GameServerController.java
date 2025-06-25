@@ -52,7 +52,7 @@ public class GameServerController {
 
     }
 
-    @GetMapping("{id}")
+    @GetMapping("details/{id}")
     ResponseEntity<GameServerDetailsDto> findGameServerDetails(Authentication authentication, @PathVariable("id") UUID gameId) {
 
         UUID userId = this.jwtService.getUserIdByToken(authentication);
@@ -88,7 +88,7 @@ public class GameServerController {
 
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("confirm/{id}")
     ResponseEntity<String> deleteGameServerFull(Authentication authentication, @PathVariable("id") UUID gameServerId) {
         UUID userId = this.jwtService.getUserIdByToken(authentication);
 
