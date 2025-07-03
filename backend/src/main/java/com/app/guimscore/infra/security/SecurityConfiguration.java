@@ -27,7 +27,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorization -> {
-                    authorization.requestMatchers("auth/**").permitAll();
+                    authorization.requestMatchers("api/auth/**").permitAll();
+                    authorization.anyRequest().hasRole("ADMIN");
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
