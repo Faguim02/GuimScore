@@ -62,6 +62,8 @@ public class GameServerServiceTest {
 
             Assertions.assertDoesNotThrow(() -> gameServerService.createGameServer(gameServerDto, uuid), RuntimeException.class.getName());
 
+            Mockito.verify(gameServerRepository, Mockito.times(1)).save(Mockito.any(GameServerModel.class));
+
         }
 
         @Test
