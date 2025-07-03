@@ -30,7 +30,6 @@ public class DataModel {
     }
 
     public DataModel() {
-        this.uuid = UUID.randomUUID();
     }
 
     public UUID getUuid() {

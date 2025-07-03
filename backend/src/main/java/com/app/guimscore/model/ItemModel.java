@@ -22,7 +22,6 @@ public class ItemModel {
     }
 
     public ItemModel() {
-        this.uuid = UUID.randomUUID();
     }
 
     public UUID getUuid() {

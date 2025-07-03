@@ -27,9 +27,6 @@ public class GameServerModel {
     }
 
     public GameServerModel() {
-        this.uuid = UUID.randomUUID();
-        this.dateAt = new Date();
-        this.dateUpdate = new Date();
     }
 
     public UUID getUuid() {
