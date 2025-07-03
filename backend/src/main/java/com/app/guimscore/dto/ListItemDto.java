@@ -12,9 +12,11 @@ public class ListItemDto {
     private UserModel player;
 
     public ListItemDto() {
+        this.uuid = UUID.randomUUID();
     }
 
     public ListItemDto(String listName) {
+        this.uuid = UUID.randomUUID();
         this.listName = listName;
     }
 
