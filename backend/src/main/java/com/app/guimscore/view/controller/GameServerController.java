@@ -52,7 +52,7 @@ public class GameServerController {
 
     }
 
-    @GetMapping("details/{id}")
+    @GetMapping("{id}")
     ResponseEntity<GameServerDetailsDto> findGameServerDetails(Authentication authentication, @PathVariable("id") UUID gameId) {
 
         UUID userId = this.jwtService.getUserIdByToken(authentication);
