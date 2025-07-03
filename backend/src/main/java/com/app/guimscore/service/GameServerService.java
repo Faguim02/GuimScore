@@ -47,6 +47,8 @@ public class GameServerService {
 
             gameServerModel.setUser(userModel.get());
 
+            gameServerRepository.save(gameServerModel);
+
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
         }
