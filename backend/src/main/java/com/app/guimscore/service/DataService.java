@@ -46,7 +46,7 @@ public class DataService {
                 throw new NotFoundException("usuario ou gameServer inexistente");
             }
 
-            if (!gameServerModel.get().getUser().equals(userModel.get())) {
+            if (!gameServerModel.get().getUser().getUuid().equals(userModel.get().getUuid())) {
                 throw new ForbiddenException("Acesso negado");
             }
 
@@ -139,13 +139,14 @@ public class DataService {
     public void updateData(UUID dataId, UUID userId, UUID gameServerId, DataDto dataDto) {
         try {
 
-            this.validateAccessToData(dataId, userId, gameServerId);
+            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
 
-            DataModel newData = new DataModel();
+            dataModel.setValue(dataDto.getValue() != null ? dataDto.getValue() : dataModel.getValue());
+            dataModel.setMaxValue(dataDto.getMaxValue() != null ? dataDto.getMaxValue(): dataModel.getMaxValue());
+            dataModel.setMinValue(dataDto.getValue() != null ? dataDto.getMinValue() : dataModel.getMinValue());
+            dataModel.setNameData(dataDto.getNameData().isEmpty() ? dataModel.getNameData() : dataDto.getNameData());
 
-            BeanUtils.copyProperties(dataDto, newData);
-
-            this.dataRepository.save(newData);
+            this.dataRepository.save(dataModel);
 
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
