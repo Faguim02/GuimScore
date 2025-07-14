@@ -9,6 +9,8 @@ export default {
   theme: {
     extend: {
       colors: {
+        'brand-purple-100': '#6B5B76',
+        'brand-purple-200': '#614E6E',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -54,6 +56,10 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        "fugaz-one": ['"Fugaz One"', "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
