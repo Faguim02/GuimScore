@@ -47,6 +47,8 @@ public class GameServerService {
 
             gameServerModel.setUser(userModel.get());
 
+            gameServerRepository.save(gameServerModel);
+
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
         }
@@ -118,7 +120,8 @@ public class GameServerService {
     public void updateGameServer(UUID userId, UUID gameServerId, GameServerDto gameServerDto) {
         GameServerModel gameServerModel = this.isGameServerExistAndAuthorized(userId, gameServerId);
 
-        BeanUtils.copyProperties(gameServerDto, gameServerModel);
+        gameServerModel.setNameServer(gameServerDto.getNameServer().isEmpty() ? gameServerModel.getNameServer() : gameServerDto.getNameServer());
+        gameServerModel.setDescription(gameServerDto.getDescription().isEmpty() ? gameServerModel.getDescription() : gameServerDto.getDescription());
 
         this.gameServerRepository.save(gameServerModel);
     }

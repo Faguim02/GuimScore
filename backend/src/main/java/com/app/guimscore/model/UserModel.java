@@ -33,7 +33,6 @@ public class UserModel implements UserDetails {
     }
 
     public UserModel() {
-        this.uuid = UUID.randomUUID();
     }
 
     public UUID getUuid() {

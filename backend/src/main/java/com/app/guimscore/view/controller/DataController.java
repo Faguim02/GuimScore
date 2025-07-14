@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("data")
+@RequestMapping("api/data")
 public class DataController {
 
     @Autowired
@@ -54,7 +54,7 @@ public class DataController {
         return ResponseEntity.ok(dataResDtoList);
     }
 
-    @GetMapping()
+    @GetMapping("details")
     ResponseEntity<DataDetailsDto> findDataById(Authentication authentication, @RequestParam("game-id") UUID gameId, @RequestParam("data-id") UUID dataId) {
 
         UUID userId = this.jwtService.getUserIdByToken(authentication);

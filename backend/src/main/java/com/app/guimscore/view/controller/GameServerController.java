@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("game-server")
+@RequestMapping("api/game-server")
 public class GameServerController {
 
     @Autowired
@@ -88,7 +88,7 @@ public class GameServerController {
 
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("confirm/{id}")
     ResponseEntity<String> deleteGameServerFull(Authentication authentication, @PathVariable("id") UUID gameServerId) {
         UUID userId = this.jwtService.getUserIdByToken(authentication);
 

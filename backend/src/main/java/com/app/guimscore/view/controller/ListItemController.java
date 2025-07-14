@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("list")
+@RequestMapping("api/list")
 public class ListItemController {
 
     @Autowired
@@ -53,7 +53,7 @@ public class ListItemController {
         return ResponseEntity.ok(listItemResDto);
     }
 
-    @GetMapping()
+    @GetMapping("details")
     ResponseEntity<ListItemResDto> findListItemById(Authentication authentication,
                                                           @RequestParam("game-id") UUID gameId,
                                                           @RequestParam("listId") UUID listId
@@ -147,7 +147,7 @@ public class ListItemController {
         return ResponseEntity.ok(resDtos);
     }
 
-    @GetMapping("/items/{itemId}")
+    @GetMapping("/items/details/{itemId}")
     public ResponseEntity<ItemDetailsResDto> getItemById(
             Authentication authentication,
             @PathVariable("itemId") UUID itemId,

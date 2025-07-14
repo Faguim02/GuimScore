@@ -11,9 +11,11 @@ public class ItemDto {
     private ItemsModel listItem;
 
     public ItemDto() {
+        this.uuid = UUID.randomUUID();
     }
 
     public ItemDto(String itemName, String itemDescription) {
+        this.uuid = UUID.randomUUID();
         this.itemName = itemName;
         this.itemDescription = itemDescription;
     }

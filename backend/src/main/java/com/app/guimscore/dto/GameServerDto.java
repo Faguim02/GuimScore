@@ -16,12 +16,17 @@ public class GameServerDto {
     private UserModel user;
 
     public GameServerDto(String nameServer, String description) {
+        this.uuid = UUID.randomUUID();
+        this.dateAt = new Date();
+        this.dateUpdate = new Date();
         this.nameServer = nameServer;
         this.description = description;
     }
 
     public GameServerDto() {
-
+        this.uuid = UUID.randomUUID();
+        this.dateAt = new Date();
+        this.dateUpdate = new Date();
     }
 
     public UUID getUuid() {
