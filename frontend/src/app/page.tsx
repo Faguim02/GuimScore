@@ -1,160 +1,57 @@
-"use client"
-
-import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { gameServerApi } from '@/lib/api'
-import { GameServer } from '@/types'
+import Link from 'next/link'
 
-export default function Dashboard() {
-  const [gameServers, setGameServers] = useState<GameServer[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [newServer, setNewServer] = useState({
-    name: '',
-    description: '',
-    userId: 'user-1' // Por enquanto hardcoded, depois você pode implementar autenticação
-  })
-
-  useEffect(() => {
-    loadGameServers()
-  }, [])
-
-  const loadGameServers = async () => {
-    try {
-      setLoading(true)
-      const response = await gameServerApi.getAll()
-      setGameServers(response.data.data)
-    } catch (error) {
-      console.error('Erro ao carregar game servers:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleCreateServer = async () => {
-    try {
-      await gameServerApi.create(newServer)
-      setIsCreateDialogOpen(false)
-      setNewServer({ name: '', description: '', userId: 'user-1' })
-      loadGameServers()
-    } catch (error) {
-      console.error('Erro ao criar game server:', error)
-    }
-  }
-
-  const handleDeleteServer = async (id: string) => {
-    try {
-      await gameServerApi.delete(id)
-      loadGameServers()
-    } catch (error) {
-      console.error('Erro ao deletar game server:', error)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
-  }
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">GuimScore Dashboard</h1>
-            <p className="text-gray-600 mt-2">Gerencie seus game servers e dados de jogos</p>
-          </div>
-          
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Criar Game Server</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Criar Novo Game Server</DialogTitle>
-                <DialogDescription>
-                  Crie um novo servidor para armazenar dados dos seus jogos.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Nome</label>
-                  <Input
-                    placeholder="Nome do game server"
-                    value={newServer.name}
-                    onChange={(e) => setNewServer({ ...newServer, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Descrição</label>
-                  <Input
-                    placeholder="Descrição do game server"
-                    value={newServer.description}
-                    onChange={(e) => setNewServer({ ...newServer, description: e.target.value })}
-                  />
-                </div>
+    <div className="flex flex-col min-h-screen">
+      <header className="px-4 lg:px-6 h-14 flex items-center">
+        <Link className="flex items-center justify-center" href="#">
+          <span className="sr-only">GuimScore</span>
+        </Link>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="/sign-in"
+          >
+            Login
+          </Link>
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="/sign-up"
+          >
+            Registrar
+          </Link>
+        </nav>
+      </header>
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  GuimScore
+                </h1>
+                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                  A sua plataforma para gerenciamento de dados de jogos. Crie, gerencie e analise os dados dos seus servidores de jogos com facilidade.
+                </p>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleCreateServer} disabled={!newServer.name}>
-                  Criar
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gameServers.map((server) => (
-            <Card key={server.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">{server.name}</CardTitle>
-                <CardDescription>{server.description || 'Sem descrição'}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>ID: {server.id}</p>
-                  <p>Criado em: {new Date(server.createdAt).toLocaleDateString('pt-BR')}</p>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline">
-                    Gerenciar Items
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="destructive"
-                    onClick={() => handleDeleteServer(server.id)}
-                  >
-                    Deletar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {gameServers.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Nenhum game server encontrado
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Crie seu primeiro game server para começar a armazenar dados dos seus jogos.
-            </p>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              Criar Primeiro Game Server
-            </Button>
+              <div className="space-x-4">
+                <Link
+                  className="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
+                  href="/dashboard"
+                >
+                  Acessar Dashboard
+                </Link>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </section>
+      </main>
+      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          © 2024 GuimScore. Todos os direitos reservados.
+        </p>
+      </footer>
     </div>
   )
 }
