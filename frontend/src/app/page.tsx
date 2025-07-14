@@ -4,12 +4,11 @@ import Link from 'next/link'
 export default function LandingPage() {
   return (
     <div
-      className="flex flex-col min-h-screen"
+      className="flex flex-col min-h-screen animate-scroll-bg"
       style={{
         backgroundImage: "url('/bg_controls.png')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'auto',
+        backgroundRepeat: 'repeat-y',
       }}
     >
       <header className="px-4 lg:px-6 h-14 flex items-center">

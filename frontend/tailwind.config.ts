@@ -61,6 +61,15 @@ export default {
         "fugaz-one": ['"Fugaz One"', "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
       },
+      animation: {
+        'scroll-bg': 'scroll-bg 55s linear infinite',
+      },
+      keyframes: {
+        'scroll-bg': {
+          '0%': { backgroundPosition: '50% 0%' },
+          '100%': { backgroundPosition: '50% -200%' },
+        },
+      },
     },
   },
   plugins: [],

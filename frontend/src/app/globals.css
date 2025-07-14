@@ -67,3 +67,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes scroll-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
