@@ -72,25 +72,25 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-        <section className="h-screen w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-950">
+        <section className="h-screen w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-gray-900">
           <div className="h-full container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
             <div className="grid w-full grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-900/50">
-                <Shield className="h-12 w-12 text-brand-purple-100" />
+              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-800">
+                <Shield className="h-12 w-12 text-white" />
                 <h3 className="text-xl font-bold font-fugaz-one text-black dark:text-white">Segurança</h3>
                 <p className="text-gray-500 dark:text-gray-400 font-poppins text-center">
                   Usuários e jogadores serão totalmente protegidos.
                 </p>
               </div>
-              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-900/50">
-                <Paintbrush className="h-12 w-12 text-brand-purple-100" />
+              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-800">
+                <Paintbrush className="h-12 w-12 text-white" />
                 <h3 className="text-xl font-bold font-fugaz-one text-black dark:text-white">Fácil acesso</h3>
                 <p className="text-gray-500 dark:text-gray-400 font-poppins text-center">
                   Interface amigável para o cliente, facilitando o uso.
                 </p>
               </div>
-              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-900/50">
-                <Database className="h-12 w-12 text-brand-purple-100" />
+              <div className="flex flex-col items-center justify-center space-y-4 rounded-lg bg-gray-50 p-6 shadow-sm dark:bg-gray-800">
+                <Database className="h-12 w-12 text-white" />
                 <h3 className="text-xl font-bold font-fugaz-one text-black dark:text-white">Armazenamento</h3>
                 <p className="text-gray-500 dark:text-gray-400 font-poppins text-center">
                   Armazena os dados dos jogos, e cria backups.

@@ -9,6 +9,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        'dark-900': '#23252C',
         'brand-purple-100': '#6B5B76',
         'brand-purple-200': '#614E6E',
         background: "hsl(var(--background))",
@@ -62,7 +63,7 @@ export default {
         poppins: ["Poppins", "sans-serif"],
       },
       animation: {
-        'scroll-bg': 'scroll-bg 55s linear infinite',
+        'scroll-bg': 'scroll-bg 80s linear infinite',
       },
       keyframes: {
         'scroll-bg': {

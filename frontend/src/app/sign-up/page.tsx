@@ -5,33 +5,39 @@ import Link from 'next/link'
 
 export default function SignUp() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 animate-scroll-bg"
+    style={{
+      backgroundImage: "url('/bg_controls.png')",
+      backgroundSize: 'auto',
+      backgroundRepeat: 'repeat-y',
+    }}
+    >
+      <Card className="bg-white w-full max-w-md dark:bg-gray-900 shadow-lg border dark:border-gray-700">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Criar Conta</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl dark:text-white">Criar Conta</CardTitle>
+          <CardDescription className="dark:text-gray-400">
             Crie sua conta para começar a usar o GuimScore.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Nome</label>
-              <Input placeholder="Seu nome" />
+              <label className="text-sm font-medium dark:text-gray-400">User Name</label>
+              <Input placeholder="Seu username" className='dark:bg-gray-800 border dark:border-gray-700'/>
             </div>
             <div>
-              <label className="text-sm font-medium">Email</label>
-              <Input type="email" placeholder="seu@email.com" />
+              <label className="text-sm font-medium dark:text-gray-400">Email</label>
+              <Input type="email" placeholder="seu@email.com" className='dark:bg-gray-800 border dark:border-gray-700'/>
             </div>
             <div>
-              <label className="text-sm font-medium">Senha</label>
-              <Input type="password" placeholder="Crie uma senha" />
+              <label className="text-sm font-medium dark:text-gray-400">Senha</label>
+              <Input type="password" placeholder="Crie uma senha" className='dark:bg-gray-800 border dark:border-gray-700'/>
             </div>
           </div>
-          <Button className="w-full mt-6">Criar Conta</Button>
-          <div className="mt-4 text-center text-sm">
+          <Button className="w-full mt-6 bg-brand-purple-100 hover:bg-brand-purple-200">Criar Conta</Button>
+          <div className="mt-4 text-center text-sm dark:text-gray-400">
             Já tem uma conta?{' '}
-            <Link href="/sign-in" className="underline">
+            <Link href="/sign-in" className="underline dark:text-brand-purple-100 hover:text-brand-purple-200">
               Faça login
             </Link>
           </div>
