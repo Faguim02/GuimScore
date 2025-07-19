@@ -1,65 +1,55 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { gameServerApi } from '@/lib/api'
-import { GameServer } from '@/types'
+import { Server, MoreVertical } from "lucide-react"
+
+const fakeGameServers = [
+  {
+    id: '1',
+    name: 'Servidor de Teste 1',
+    description: 'Um servidor para testar o jogo X.',
+    createdAt: new Date().toISOString(),
+    userId: 'user-1',
+  },
+  {
+    id: '2',
+    name: 'Arena Competitiva',
+    description: 'Servidor para partidas 5v5.',
+    createdAt: new Date().toISOString(),
+    userId: 'user-1',
+  },
+  {
+    id: '3',
+    name: 'Mundo Aberto',
+    description: '',
+    createdAt: new Date().toISOString(),
+    userId: 'user-1',
+  },
+]
 
 export default function Dashboard() {
-  const [gameServers, setGameServers] = useState<GameServer[]>([])
-  const [loading, setLoading] = useState(true)
+  const [gameServers, setGameServers] = useState(fakeGameServers)
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [newServer, setNewServer] = useState({
     name: '',
     description: '',
-    userId: 'user-1' // Por enquanto hardcoded, depois você pode implementar autenticação
+    userId: 'user-1'
   })
 
-  useEffect(() => {
-    loadGameServers()
-  }, [])
-
-  const loadGameServers = async () => {
-    try {
-      setLoading(true)
-      const response = await gameServerApi.getAll()
-      setGameServers(response.data.data)
-    } catch (error) {
-      console.error('Erro ao carregar game servers:', error)
-    } finally {
-      setLoading(false)
-    }
+  const handleCreateServer = () => {
+    // Lógica para adicionar um novo servidor (no futuro)
+    console.log("Novo servidor:", newServer)
+    setIsCreateDialogOpen(false)
   }
 
-  const handleCreateServer = async () => {
-    try {
-      await gameServerApi.create(newServer)
-      setIsCreateDialogOpen(false)
-      setNewServer({ name: '', description: '', userId: 'user-1' })
-      loadGameServers()
-    } catch (error) {
-      console.error('Erro ao criar game server:', error)
-    }
-  }
-
-  const handleDeleteServer = async (id: string) => {
-    try {
-      await gameServerApi.delete(id)
-      loadGameServers()
-    } catch (error) {
-      console.error('Erro ao deletar game server:', error)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    )
+  const handleDeleteServer = (id: string) => {
+    // Lógica para apagar um servidor (no futuro)
+    console.log("Apagar servidor com ID:", id)
   }
 
   return (
@@ -114,25 +104,39 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {gameServers.map((server) => (
           <Card key={server.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="text-xl">{server.name}</CardTitle>
-              <CardDescription>{server.description || 'Sem descrição'}</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Server className="h-6 w-6 text-gray-500" />
+                <CardTitle className="text-xl">{server.name}</CardTitle>
+              </div>
+              <div className="relative">
+                <button onClick={() => setOpenDropdownId(openDropdownId === server.id ? null : server.id)}>
+                  <MoreVertical className="h-5 w-5" />
+                </button>
+                {openDropdownId === server.id && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Editar
+                    </button>
+                    <button 
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      onClick={() => handleDeleteServer(server.id)}
+                    >
+                      Apagar
+                    </button>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 text-sm text-gray-600">
+              <CardDescription>{server.description || 'Sem descrição'}</CardDescription>
+              <div className="space-y-2 text-sm text-gray-600 mt-4">
                 <p>ID: {server.id}</p>
                 <p>Criado em: {new Date(server.createdAt).toLocaleDateString('pt-BR')}</p>
               </div>
               <div className="flex gap-2 mt-4">
                 <Button size="sm" variant="outline">
                   Gerenciar Items
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="destructive"
-                  onClick={() => handleDeleteServer(server.id)}
-                >
-                  Deletar
                 </Button>
               </div>
             </CardContent>
