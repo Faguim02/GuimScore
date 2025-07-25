@@ -1,5 +1,6 @@
 "use client"
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -135,9 +136,11 @@ export default function Dashboard() {
                 <p>Criado em: {new Date(server.createdAt).toLocaleDateString('pt-BR')}</p>
               </div>
               <div className="flex gap-2 mt-4">
-                <Button size="sm" variant="outline">
-                  Gerenciar Items
-                </Button>
+                <Link href={`/dashboard/game-server/${server.id}`}>
+                  <Button size="sm" variant="outline">
+                    Gerenciar Items
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
