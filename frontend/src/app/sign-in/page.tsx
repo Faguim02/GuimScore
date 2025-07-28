@@ -25,8 +25,12 @@ export default function SignIn() {
 
       localStorage.setItem('token', token);
       window.location.href = '/dashboard';
-    } catch (error) {
-      setError('Usuário ou senha inválidos.');
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Usuário ou senha inválidos.');
+      }
     }
 
   };
