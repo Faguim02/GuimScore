@@ -1,9 +1,16 @@
+import exp from "constants";
+
 export interface User {
-  id: string;
-  username: string;
+  id?: string;
+  name: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
+  password: string;
+}
+
+export interface ErroMessage {
+  title: string;
+  message: string;
+  status: number;
 }
 
 export interface GameServer {
