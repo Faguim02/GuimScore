@@ -3,16 +3,32 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { UserService } from '@/service/userService';
 import Link from 'next/link'
 import { useState } from 'react';
 
 export default function SignIn() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
-  const handleSignIn = () => {
-    // Lógica de autenticação aqui
-    console.log({ username, password });
+  const handleSignIn = async () => {
+    if (!username || !password) {
+      setError('Por favor, preencha todos os campos.');
+      return;
+    }
+    setError('');
+  
+    try {
+      const userService = new UserService();
+      const token = await userService.signIn({ name: username, password });
+
+      localStorage.setItem('token', token);
+      window.location.href = '/dashboard';
+    } catch (error) {
+      setError('Usuário ou senha inválidos.');
+    }
+
   };
 
   return (
@@ -52,6 +68,7 @@ export default function SignIn() {
               />
             </div>
           </div>
+          {error && <p className="text-red-500 text-sm text-center mt-4">{error}</p>}
           <Button
             onClick={handleSignIn}
             className="w-full mt-6 bg-brand-purple-100 hover:bg-brand-purple-200"
