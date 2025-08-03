@@ -1,4 +1,5 @@
 import { api, setupInterceptorsAuth } from "@/lib/api";
+import { GameServer } from "@/types";
 
 export class GameServerService {
   
@@ -7,13 +8,13 @@ export class GameServerService {
     async createGameServer(body:{nameServer: string, description?: string}) {
 
         setupInterceptorsAuth();
-        const response = await this.api.post<{ message: string }>('/game-server', body);
+        const response = await this.api.post<GameServer>('/game-server', body);
 
         if (response.status !== 201) {
             throw new Error('Erro ao criar servidor de jogo');
         }
 
-        return response.data.message;
+        return response.data;
     }
 
     async getGameServers() {

@@ -54,14 +54,14 @@ export default function Dashboard() {
 
       let gameServerService = new GameServerService();
 
-      await gameServerService.createGameServer(newServer)
+      let data = await gameServerService.createGameServer(newServer)
 
       setGameServers([...gameServers, {
-        id: "1",
-        name: newServer.nameServer,
-        description: newServer.description,
+        id: data.id,
+        name: data.nameServer,
+        description: data.description || '',
         createdAt: new Date().toISOString(),
-        userId: 'user-1',
+        userId: 'ainda não implementado', // Ajustar conforme necessário
       }])
 
     } catch (err) {

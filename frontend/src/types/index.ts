@@ -15,7 +15,7 @@ export interface ErroMessage {
 
 export interface GameServer {
   id: string;
-  name: string;
+  nameServer: string;
   description?: string;
   userId?: string;
   createdAt?: string;
