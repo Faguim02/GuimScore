@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Server, MoreVertical } from "lucide-react"
+import { GameServerService } from '@/service/gameServerService'
 
 const fakeGameServers = [
   {
@@ -36,15 +37,39 @@ export default function Dashboard() {
   const [gameServers, setGameServers] = useState(fakeGameServers)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [newServer, setNewServer] = useState({
-    name: '',
+    nameServer: '',
     description: '',
-    userId: 'user-1'
   })
 
-  const handleCreateServer = () => {
-    // Lógica para adicionar um novo servidor (no futuro)
-    console.log("Novo servidor:", newServer)
+  const handleCreateServer = async () => {
+    
+    if (!newServer.nameServer) {
+      setError('O nome do servidor é obrigatório.')
+      return
+    }
+
+    try {
+
+      let gameServerService = new GameServerService();
+
+      await gameServerService.createGameServer(newServer)
+
+      setGameServers([...gameServers, {
+        id: "1",
+        name: newServer.nameServer,
+        description: newServer.description,
+        createdAt: new Date().toISOString(),
+        userId: 'user-1',
+      }])
+
+    } catch (err) {
+      setError('Erro ao criar o servidor. Tente novamente.')
+      console.error(err)
+      return
+    }
+
     setIsCreateDialogOpen(false)
   }
 
@@ -77,8 +102,8 @@ export default function Dashboard() {
                 <label className="text-sm font-medium">Nome</label>
                 <Input
                   placeholder="Nome do game server"
-                  value={newServer.name}
-                  onChange={(e) => setNewServer({ ...newServer, name: e.target.value })}
+                  value={newServer.nameServer}
+                  onChange={(e) => setNewServer({ ...newServer, nameServer: e.target.value })}
                 />
               </div>
               <div>
@@ -88,13 +113,15 @@ export default function Dashboard() {
                   value={newServer.description}
                   onChange={(e) => setNewServer({ ...newServer, description: e.target.value })}
                 />
+
+                {error && <p className="text-red-500 text-sm text-center mt-4">{error}</p>}
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCreateServer} disabled={!newServer.name}>
+              <Button onClick={handleCreateServer} disabled={!newServer.nameServer}>
                 Criar
               </Button>
             </DialogFooter>
