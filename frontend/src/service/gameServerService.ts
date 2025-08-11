@@ -6,7 +6,6 @@ export class GameServerService {
     private api = api;
 
     async createGameServer(body:{nameServer: string, description?: string}) {
-
         setupInterceptorsAuth();
         const response = await this.api.post<GameServer>('/game-server', body);
 
@@ -17,14 +16,24 @@ export class GameServerService {
         return response.data;
     }
 
-    async getGameServers() {
-        const response = await this.api.get<{ servers: string[] }>('/game-server');
+    async getGameServers(): Promise<GameServer[]> {
+        setupInterceptorsAuth();
+        const response = await this.api.get<GameServer[]>('/game-server');
 
         if (response.status !== 200) {
             throw new Error('Erro ao buscar servidores de jogo');
         }
 
-        return response.data.servers;
+        return response.data;
+    }
+
+    async deleteGameServer(id: string): Promise<void> {
+        setupInterceptorsAuth();
+        const response = await this.api.delete(`/game-server/${id}`);
+
+        if (response.status !== 200 && response.status !== 204) {
+            throw new Error('Erro ao deletar servidor de jogo');
+        }
     }
 
 }
