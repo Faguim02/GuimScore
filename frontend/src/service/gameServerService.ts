@@ -36,4 +36,14 @@ export class GameServerService {
         }
     }
 
+    async updateGameServer(id: string, body: { nameServer?: string, description?: string }): Promise<GameServer> {
+        setupInterceptorsAuth();
+        const response = await this.api.put<any>(`/game-server/${id}`, body);
+
+        if (response.status !== 200) {
+            throw new Error('Erro ao atualizar servidor de jogo');
+        }
+
+        return response.data;
+    }
 }

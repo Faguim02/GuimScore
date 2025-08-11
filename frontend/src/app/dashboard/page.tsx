@@ -19,12 +19,14 @@ export default function Dashboard() {
 
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [newServer, setNewServer] = useState({
     nameServer: '',
     description: '',
   })
+  const [editingServer, setEditingServer] = useState<GameServer | null>(null);
 
   // Busca os dados usando React Query
   const { data: gameServers, isLoading, isError, error } = useQuery<GameServer[], Error>({
@@ -59,12 +61,44 @@ export default function Dashboard() {
     }
   });
 
+  // Mutação para editar o servidor
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { nameServer?: string; description?: string } }) =>
+      gameServerService.updateGameServer(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gameServers'] });
+      setIsEditDialogOpen(false);
+      setEditingServer(null);
+      setFormError(null);
+    },
+    onError: (err) => {
+      setFormError('Erro ao atualizar o servidor. Tente novamente.');
+      console.error(err);
+    }
+  });
+
   const handleCreateServer = () => {
     if (!newServer.nameServer) {
       setFormError('O nome do servidor é obrigatório.');
       return;
     }
     createMutation.mutate(newServer);
+  }
+
+  const handleEditServer = (server: GameServer) => {
+    setEditingServer(server);
+    setIsEditDialogOpen(true);
+    setOpenDropdownId(null);
+  };
+
+  const handleUpdateServer = () => {
+    if (!editingServer) return;
+
+    if (!editingServer.nameServer) {
+      setFormError('O nome do servidor é obrigatório.');
+      return;
+    }
+    updateMutation.mutate({ id: editingServer.id, data: { nameServer: editingServer.nameServer, description: editingServer.description } });
   }
 
   const handleDeleteServer = (id: string) => {
@@ -153,7 +187,7 @@ export default function Dashboard() {
                   </button>
                   {openDropdownId === server.id && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                      <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => handleEditServer(server)}>
                         Editar
                       </button>
                       <button 
@@ -202,6 +236,46 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+      )}
+
+      {editingServer && (
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Game Server</DialogTitle>
+              <DialogDescription>
+                Atualize os dados do seu servidor.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Nome</label>
+                <Input
+                  placeholder="Nome do game server"
+                  value={editingServer.nameServer}
+                  onChange={(e) => setEditingServer({ ...editingServer, nameServer: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Descrição</label>
+                <Input
+                  placeholder="Descrição do game server"
+                  value={editingServer.description || ''}
+                  onChange={(e) => setEditingServer({ ...editingServer, description: e.target.value })}
+                />
+                {formError && <p className="text-red-500 text-sm text-center mt-4">{formError}</p>}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleUpdateServer} disabled={updateMutation.isPending || !editingServer.nameServer}>
+                {updateMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Salvar'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </>
   )
