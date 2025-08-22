@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { MoreVertical, PlusCircle } from 'lucide-react'
 
@@ -61,6 +62,7 @@ const fakeLists = [
 export default function GameServerManagementPage({ params }: { params: { id: string } }) {
   const [gameData, setGameData] = useState(fakeGameData)
   const [lists, setLists] = useState(fakeLists)
+  const [isAddDataModalOpen, setIsAddDataModalOpen] = useState(false)
 
   return (
     <div className="space-y-6">
@@ -71,10 +73,39 @@ export default function GameServerManagementPage({ params }: { params: { id: str
             <CardTitle>Dados do Jogo</CardTitle>
             <CardDescription>Gerencie os dados de chave-valor do seu jogo.</CardDescription>
           </div>
-          <Button size="sm" className="flex items-center gap-1">
-            <PlusCircle className="h-4 w-4" />
-            Adicionar Dado
-          </Button>
+          <Dialog open={isAddDataModalOpen} onOpenChange={setIsAddDataModalOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="flex items-center gap-1">
+                <PlusCircle className="h-4 w-4" />
+                Adicionar Dado
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Adicionar Novo Dado</DialogTitle>
+                <DialogDescription>
+                  Preencha os campos para adicionar um novo dado ao seu jogo.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="key" className="text-right">
+                    Chave
+                  </label>
+                  <Input id="key" defaultValue="" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="value" className="text-right">
+                    Valor (JSON)
+                  </label>
+                  <Input id="value" defaultValue="" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Salvar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent>
           <div className="border rounded-md">
