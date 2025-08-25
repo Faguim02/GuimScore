@@ -22,13 +22,15 @@ export interface GameServer {
   updatedAt?: string;
 }
 
-export interface GameItem {
-  id: string;
-  key: string;
+export interface DataItem {
+  id?: string;
+  nameData: string;
   value: string | number | boolean;
-  gameServerId: string;
-  createdAt: string;
-  updatedAt: string;
+  maxValue?: string | number | boolean;
+  minValue?: string | number | boolean;
+  gameServerId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApiResponse<T> {
