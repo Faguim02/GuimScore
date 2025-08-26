@@ -44,6 +44,13 @@ public class SecurityConfiguration {
                     authorization.requestMatchers(HttpMethod.POST, "/api/game-server").authenticated();
                     authorization.requestMatchers(HttpMethod.GET, "/api/game-server").authenticated();
                     authorization.requestMatchers(HttpMethod.DELETE, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.POST, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.DELETE, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.POST, "/api/data?game-id=**").authenticated();
                     authorization.anyRequest().denyAll();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
