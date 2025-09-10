@@ -68,7 +68,7 @@ const Introducao = () => {
     </section>
 
     <section className="mb-16 bg-white rounded-xl p-8 md:p-10">
-      <a href='/docs/pt-BR/gameserver' className="flex items-center text-indigo-600 font-semibold hover:underline mx-auto w-fit">
+      <a href='/docs/pt-BR/auth' className="flex items-center text-indigo-600 font-semibold hover:underline mx-auto w-fit">
         <p>Proximo</p>
         <ArrowRight className="inline-block ml-2 h-4 w-4" />
       </a>
