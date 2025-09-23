@@ -22,6 +22,13 @@ public class PlayerDto {
         this.id = UUID.randomUUID();
     }
 
+    public PlayerDto(String name, String password, UUID gameServerId) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.password = password;
+        this.gameServerId = gameServerId;
+    }
+
     public UUID getId() {
         return id;
     }
