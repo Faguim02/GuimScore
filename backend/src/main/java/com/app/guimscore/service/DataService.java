@@ -8,6 +8,7 @@ import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
+import com.app.guimscore.repository.PlayerRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class DataService {
     private UserRepository userRepository;
     @Autowired
     private GameServerRepository gameServerRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     public void createData(DataDto dataDto, UUID userId, UUID gameServerId) {
 
@@ -49,6 +52,11 @@ public class DataService {
             if (!gameServerModel.get().getUser().getUuid().equals(userModel.get().getUuid())) {
                 throw new ForbiddenException("Acesso negado");
             }
+
+            playerRepository.findByGameServerId(gameServerId).forEach(player -> {
+                player.getData().add(dataModel);
+                playerRepository.save(player);
+            });
 
             dataModel.setGameServerModel(gameServerModel.get());
             dataModel.setPlayer(userModel.get());
@@ -145,6 +153,28 @@ public class DataService {
             dataModel.setMaxValue(dataDto.getMaxValue() != null ? dataDto.getMaxValue(): dataModel.getMaxValue());
             dataModel.setMinValue(dataDto.getValue() != null ? dataDto.getMinValue() : dataModel.getMinValue());
             dataModel.setNameData(dataDto.getNameData().isEmpty() ? dataModel.getNameData() : dataDto.getNameData());
+
+            this.dataRepository.save(dataModel);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addValueToData(UUID dataId, UUID userId, UUID gameServerId, Integer valueToAdd, UUID playerId) {
+        try {
+
+            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
+
+            Integer newValue = dataModel.getValue() + valueToAdd;
+            if (newValue > dataModel.getMaxValue()) {
+                newValue = dataModel.getMaxValue();
+            }
+            dataModel.setValue(newValue);
 
             this.dataRepository.save(dataModel);
 
