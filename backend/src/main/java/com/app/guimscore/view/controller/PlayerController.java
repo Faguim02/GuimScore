@@ -1,27 +1,29 @@
 package com.app.guimscore.view.controller;
 
 import com.app.guimscore.dto.PlayerDto;
+import com.app.guimscore.model.DataModel;
+import com.app.guimscore.model.ItemsModel;
 import com.app.guimscore.service.PlayerService;
+import com.app.guimscore.view.model.PlayerDetailsRes;
 import com.app.guimscore.view.model.PlayerReqDto;
 import com.app.guimscore.view.model.PlayerResDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("api/players")
+@RequestMapping("api/player")
 public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
 
-    @PostMapping("/signup")
+    @PostMapping("/signUp")
     public void signUp(@RequestBody PlayerReqDto playerReqDto) {
         // Implementation for player sign-up
 
@@ -38,7 +40,7 @@ public class PlayerController {
             }
         }
 
-        this.playerService.signUp(playerDto);
+         this.playerService.signUp(playerDto);
     }
 
     @PostMapping("/login")
@@ -50,6 +52,14 @@ public class PlayerController {
         PlayerResDto playerResDto = new PlayerResDto(playerDtoRes.getId(), playerDtoRes.getName(), playerDtoRes.getDateOfBirth(), playerDtoRes.getGameServerId());
 
         return ResponseEntity.ok(playerResDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlayerDetailsRes> findPlayerById(@PathVariable("id") UUID id) {
+        PlayerDto playerDto = this.playerService.findById(id);
+        PlayerDetailsRes playerDetailsRes = new PlayerDetailsRes(playerDto.getId(), playerDto.getName(), playerDto.getDateOfBirth(), playerDto.getGameServerId(), playerDto.getItems(), playerDto.getData());
+        //PlayerDetailsRes playerDetailsRes = new PlayerDetailsRes(UUID.randomUUID(), "playerDto.getName()", new Date(), UUID.randomUUID(), List.of(new ItemsModel()), List.of(new DataModel()));
+        return ResponseEntity.ok(playerDetailsRes);
     }
 
 }
