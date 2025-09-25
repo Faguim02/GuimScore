@@ -20,6 +20,8 @@ public class PlayerDto {
 
     public PlayerDto() {
         this.id = UUID.randomUUID();
+        this.data = List.of();
+        this.items = List.of();
     }
 
     public PlayerDto(String name, String password, UUID gameServerId) {
@@ -27,6 +29,8 @@ public class PlayerDto {
         this.name = name;
         this.password = password;
         this.gameServerId = gameServerId;
+        this.data = List.of();
+        this.items = List.of();
     }
 
     public UUID getId() {
