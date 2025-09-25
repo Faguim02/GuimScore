@@ -75,4 +75,8 @@ public class Player {
     public void setData(List<DataModel> data) {
         this.data = data;
     }
+
+    public void addData(DataModel dataModel) {
+        this.data.add(dataModel);
+    }
 }
