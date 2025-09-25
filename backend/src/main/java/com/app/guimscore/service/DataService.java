@@ -3,6 +3,7 @@ package com.app.guimscore.service;
 import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
+import com.app.guimscore.model.Player;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
@@ -53,8 +54,11 @@ public class DataService {
                 throw new ForbiddenException("Acesso negado");
             }
 
-            playerRepository.findByGameServerId(gameServerId).forEach(player -> {
-                player.getData().add(dataModel);
+            List<Player> players = this.playerRepository.findByGameServerId(gameServerId);
+
+            players.forEach(player -> {
+
+                player.addData(dataModel);
                 playerRepository.save(player);
             });
 
