@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface PlayerRepository extends MongoRepository<Player, UUID> {
     Optional<Player> findByName(String name);
     List<Player> findByGameServerId(UUID gameServerId);
+    boolean existsByName(String name);
 }
