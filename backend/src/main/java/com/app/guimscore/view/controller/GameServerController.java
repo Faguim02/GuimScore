@@ -25,15 +25,16 @@ public class GameServerController {
     private JwtService jwtService;
 
     @PostMapping()
-    ResponseEntity<String> createGameServer(@RequestBody GameServerReqDto gameServerReqDto, Authentication authentication) {
+    ResponseEntity<GameServerResDto> createGameServer(@RequestBody GameServerReqDto gameServerReqDto, Authentication authentication) {
 
         GameServerDto gameServerDto = new GameServerDto(gameServerReqDto.nameServer(), gameServerReqDto.description());
 
         UUID userId = jwtService.getUserIdByToken(authentication);
 
-        this.gameServerService.createGameServer(gameServerDto, userId);
+        GameServerDto gameServerDtoRes = this.gameServerService.createGameServer(gameServerDto, userId);
+        GameServerResDto gameServerResDto = new GameServerResDto(gameServerDtoRes.getUuid(), gameServerDtoRes.getNameServer(), gameServerDtoRes.getDescription(), gameServerDtoRes.getDateAt());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("GameServer criado com sucesso");
+        return ResponseEntity.status(HttpStatus.CREATED).body(gameServerResDto);
 
     }
 

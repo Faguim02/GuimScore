@@ -3,11 +3,13 @@ package com.app.guimscore.service;
 import com.app.guimscore.dto.DataDto;
 import com.app.guimscore.model.DataModel;
 import com.app.guimscore.model.GameServerModel;
+import com.app.guimscore.model.Player;
 import com.app.guimscore.model.UserModel;
 import com.app.guimscore.model.exceptions.ForbiddenException;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.repository.DataRepository;
 import com.app.guimscore.repository.GameServerRepository;
+import com.app.guimscore.repository.PlayerRepository;
 import com.app.guimscore.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class DataService {
     private UserRepository userRepository;
     @Autowired
     private GameServerRepository gameServerRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     public void createData(DataDto dataDto, UUID userId, UUID gameServerId) {
 
@@ -49,6 +53,14 @@ public class DataService {
             if (!gameServerModel.get().getUser().getUuid().equals(userModel.get().getUuid())) {
                 throw new ForbiddenException("Acesso negado");
             }
+
+            List<Player> players = this.playerRepository.findByGameServerId(gameServerId);
+
+            players.forEach(player -> {
+
+                player.addData(dataModel);
+                playerRepository.save(player);
+            });
 
             dataModel.setGameServerModel(gameServerModel.get());
             dataModel.setPlayer(userModel.get());
@@ -156,6 +168,59 @@ public class DataService {
             throw new RuntimeException(e);
         }
     }
+
+    // Adiciona um valor ao campo 'value' do DataModel, respeitando o maxValue
+    public void addValueToData(Integer valueToAdd, UUID dataId, UUID gameServerId, UUID playerId) {
+        try {
+
+            DataModel dataModel = this.dataRepository.findById(dataId)
+                    .orElseThrow(() -> new NotFoundException("Data inexistente"));
+
+            Integer newValue = dataModel.getValue() + valueToAdd;
+            if (newValue > dataModel.getMaxValue()) {
+                newValue = dataModel.getMaxValue();
+            }
+            dataModel.setValue(newValue);
+
+            this.dataRepository.save(dataModel);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Subtrai um valor do campo 'value' do DataModel, respeitando o minValue
+    public void subtractValueToData(Integer valueToSubtract, UUID dataId, UUID gameServerId, UUID playerId) {
+        try {
+
+            Player player = this.playerRepository.findById(playerId)
+                    .orElseThrow(() -> new NotFoundException("Player inexistente"));
+
+             player.getData().stream()
+                    .filter(data -> data.getUuid().equals(dataId))
+                     .forEach(data -> {
+                         Integer newValue = data.getValue() - valueToSubtract;
+                         if (newValue <= data.getMinValue()) {
+                             newValue = data.getMinValue();
+                         }
+                         data.setValue(newValue);
+                     });
+
+            this.playerRepository.save(player);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
         Optional<DataModel> dataModel = this.dataRepository.findById(dataId);

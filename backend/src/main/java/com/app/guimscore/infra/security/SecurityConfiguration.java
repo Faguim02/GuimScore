@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,18 +26,39 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(request -> new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues())) // Garante que a config CORS seja usada
+                .cors(cors -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://guimscore.com.br")); // ← removi espaço extra
+                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept")); // ← evite "*" com allowCredentials
+                    configuration.setAllowCredentials(true);
+                    configuration.setExposedHeaders(List.of("Authorization")); // se você retorna token no header
+                    cors.configurationSource(request -> configuration);
+                })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorization -> {
-                    
-			authorization.requestMatchers("api/auth/**").permitAll();
-            authorization.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-			authorization.anyRequest().hasRole("ADMIN");
+                    authorization.requestMatchers("/api/auth/**").permitAll();
+                    authorization.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll(); // pré-flight
+                    authorization.requestMatchers(HttpMethod.POST, "/api/game-server").authenticated();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/game-server").authenticated();
+                    authorization.requestMatchers(HttpMethod.DELETE, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/game-server/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.POST, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.DELETE, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/data/**").authenticated();
+                    authorization.requestMatchers(HttpMethod.POST, "/api/data?game-id=**").authenticated();
+                    authorization.requestMatchers(HttpMethod.POST, "/api/player/**").permitAll();
+                    authorization.requestMatchers(HttpMethod.GET, "/api/player/**").permitAll();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/player/**").permitAll();
+                    authorization.anyRequest().denyAll();
                 })
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean

@@ -32,7 +32,7 @@ public class GameServerService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createGameServer(GameServerDto gameServerDto, UUID userId) {
+    public GameServerDto createGameServer(GameServerDto gameServerDto, UUID userId) {
 
         try {
             Optional<UserModel> userModel = this.userRepository.findById(userId);
@@ -48,6 +48,12 @@ public class GameServerService {
             gameServerModel.setUser(userModel.get());
 
             gameServerRepository.save(gameServerModel);
+
+            GameServerDto gameServerDtoRes = new GameServerDto(gameServerModel.getNameServer(), gameServerDto.getDescription());
+            gameServerDtoRes.setDateAt(gameServerModel.getDateAt());
+            gameServerDtoRes.setUuid(gameServerModel.getUuid());
+
+            return gameServerDtoRes;
 
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
