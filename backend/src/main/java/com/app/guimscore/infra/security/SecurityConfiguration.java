@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                     authorization.requestMatchers(HttpMethod.POST, "/api/data?game-id=**").authenticated();
                     authorization.requestMatchers(HttpMethod.POST, "/api/player/**").permitAll();
                     authorization.requestMatchers(HttpMethod.GET, "/api/player/**").permitAll();
+                    authorization.requestMatchers(HttpMethod.PUT, "/api/player/**").permitAll();
                     authorization.anyRequest().denyAll();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
