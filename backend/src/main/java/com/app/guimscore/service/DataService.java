@@ -169,10 +169,12 @@ public class DataService {
         }
     }
 
-    public void addValueToData(UUID dataId, UUID userId, UUID gameServerId, Integer valueToAdd, UUID playerId) {
+    // Adiciona um valor ao campo 'value' do DataModel, respeitando o maxValue
+    public void addValueToData(Integer valueToAdd, UUID dataId, UUID gameServerId, UUID playerId) {
         try {
 
-            DataModel dataModel = this.validateAccessToData(dataId, userId, gameServerId);
+            DataModel dataModel = this.dataRepository.findById(dataId)
+                    .orElseThrow(() -> new NotFoundException("Data inexistente"));
 
             Integer newValue = dataModel.getValue() + valueToAdd;
             if (newValue > dataModel.getMaxValue()) {
@@ -190,6 +192,35 @@ public class DataService {
             throw new RuntimeException(e);
         }
     }
+
+    // Subtrai um valor do campo 'value' do DataModel, respeitando o minValue
+    public void subtractValueToData(Integer valueToSubtract, UUID dataId, UUID gameServerId, UUID playerId) {
+        try {
+
+            Player player = this.playerRepository.findById(playerId)
+                    .orElseThrow(() -> new NotFoundException("Player inexistente"));
+
+             player.getData().stream()
+                    .filter(data -> data.getUuid().equals(dataId))
+                     .forEach(data -> {
+                         Integer newValue = data.getValue() - valueToSubtract;
+                         if (newValue <= data.getMinValue()) {
+                             newValue = data.getMinValue();
+                         }
+                         data.setValue(newValue);
+                     });
+
+            this.playerRepository.save(player);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
         Optional<DataModel> dataModel = this.dataRepository.findById(dataId);
