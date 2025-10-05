@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +26,13 @@ public class UserModel implements UserDetails {
     @NotNull(message = "É necessario preencher o tipo de permição")
     private UserRole userRole;
     private GameServerModel gameServerModel;
+    private List<ApiKey> apiKeys;
 
     public UserModel(String name, String email) {
         this.uuid = UUID.randomUUID();
         this.name = name;
         this.email = email;
+
     }
 
     public UserModel() {
@@ -89,6 +92,22 @@ public class UserModel implements UserDetails {
 
     public void setGameServerModel(GameServerModel gameServerModel) {
         this.gameServerModel = gameServerModel;
+    }
+
+    public List<ApiKey> getApiKeys() {
+        return apiKeys;
+    }
+
+    public void setApiKeys(List<ApiKey> apiKeys) {
+        this.apiKeys = apiKeys;
+    }
+
+    public void addApiKey(ApiKey apiKey) {
+        if (this.apiKeys == null) {
+            this.apiKeys = List.of(apiKey);
+            return;
+        }
+        this.apiKeys.add(apiKey);
     }
 
     @Override
