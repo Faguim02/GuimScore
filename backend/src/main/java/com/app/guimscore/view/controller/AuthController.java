@@ -1,19 +1,17 @@
 package com.app.guimscore.view.controller;
 
-import com.app.guimscore.view.model.SignInReqDto;
-import com.app.guimscore.view.model.SignInResDto;
-import com.app.guimscore.view.model.SignUpReqDto;
-import com.app.guimscore.view.model.SignUpResDto;
+import com.app.guimscore.infra.security.JwtService;
+import com.app.guimscore.view.model.*;
 import com.app.guimscore.dto.UserDto;
 import com.app.guimscore.service.AuthService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/auth")
@@ -21,6 +19,8 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("signUp")
     ResponseEntity<SignUpResDto> signUp(@RequestBody SignUpReqDto signUpReq) {
@@ -42,4 +42,15 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(signUpResDto);
     }
+
+    @PostMapping("generateApiKey")
+    ResponseEntity<String> generateApiKey(Authentication authentication, @RequestBody ApiKeyReq apiKeyReq) {
+
+        UUID userId = jwtService.getUserIdByToken(authentication);
+        String apiKey = this.authService.createApiKey(userId, apiKeyReq.name());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiKey);
+
+    }
+
 }
