@@ -1,6 +1,10 @@
+"use client";
+
 import { ArrowRight } from 'lucide-react'
+import { useState } from 'react';
 
 const Introducao = () => {
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
 
