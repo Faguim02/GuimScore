@@ -33,7 +33,7 @@ export default function DashboardLayout({
   const navLinks = [
     { href: "/dashboard", label: "Game Servers", icon: Server, id: "game-servers" },
     { href: "/dashboard/api-keys", label: "API Keys", icon: KeyRound, id: "api-keys" },
-    { href: "/docs", label: "Docs", icon: Book, id: "docs" },
+    { href: "/docs/pt-BR/introduction", label: "Docs", icon: Book, id: "docs" },
   ]
 
   const SidebarNav = () => (
