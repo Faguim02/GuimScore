@@ -1,6 +1,12 @@
-import React from 'react';
+"use client";
+
+import { useState } from 'react';
 
 const Data = () => {
+
+    const [lenguageProgramming, setLenguageProgramming] = useState('bash');
+    const lenguages = ['bash', 'gdscript'];
+
     return (
         <div className="max-w-4xl mx-auto px-6 py-12">
             <header className="text-center mb-12">
@@ -34,15 +40,17 @@ const Data = () => {
             </section>
 
             <section className='mb-16 bg-white rounded-xl shadow-md p-8 md:p-10'>
+
+                <h2 className='text-2xl font-bold text-gray-800 mb-4'>Criando um novo dado</h2>
             
                 <p>Para criar um dado para os jogadores de um servidor pelo painel de controle</p>
 
-                <ol>
+                <ul className='list-disc list-inside text-gray-700 mb-6'>
                     <li>Navegue ao painel de controle</li>
                     <li>Selecione o game server desejado</li>
                     <li>Adicione novos pares chave-valor conforme necessário</li>
                     <li>Salve as alterações</li>
-                </ol>
+                </ul>
 
                 <p>Pronto, um novo dado foi criado, observe que na tabela dos dados, ele aparece junto com o indentificador do dado</p>
 
@@ -51,8 +59,182 @@ const Data = () => {
             <section className="mb-16 bg-white rounded-xl p-8 md:p-10">
 
                 <h2 className='text-2xl font-bold text-gray-800 mb-4'>Buscando pelos dados do jogador</h2>
-                
+                <p>Para buscar os dados de um jogador, utilize a rota <code className="bg-gray-200 p-1 rounded">GET</code> o endpoint <code className="bg-gray-200 p-1 rounded">/api/player?player-id=<span className='text-red-500 p-1 rounded'>playerId</span>&api-key=<span className='text-red-500 p-1 rounded'>API_KEY</span>&user-name=<span className='text-red-500 p-1 rounded'>USER_NAME</span></code>, onde playerId representa o ID do jogador e key representa a chave do dado que vocé deseja buscar.</p>
 
+                <h3 className="text-lg font-semibold mb-4">Endepoint</h3>
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+                    <code className="language-http">
+    <code className=" p-1 rounded"> <code className='bg-indigo-500 p-1 rounded'>GET</code> /api/player?player-id=<span className='text-yellow-400 p-1 rounded'>playerId</span>&api-key=<span className='text-yellow-400 p-1 rounded'>API_KEY</span>&user-name=<span className='text-yellow-400 p-1 rounded'>USER_NAME</span></code>
+                    </code>
+                </pre>
+
+                <h3 className="text-lg font-semibold mb-4">Exemplo de Requisição {lenguageProgramming}</h3>
+                <div className='bg-white flex p-0 mb-4 rounded'>
+                        <select name="lenguage" onChange={(e) => setLenguageProgramming(e.target.value)} className="bg-slate-300 text-gray-900 p-2 rounded" id="">
+                            {lenguages.map((lang) => (
+                                <option key={lang} value={lang} selected={lenguageProgramming === lang}>{lang}</option>
+                            ))}
+                        </select>
+                </div>
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+
+                    {lenguageProgramming === 'bash' && 
+                     <code className="language-bash">
+{`curl -X GET "https://api.guimscore.com/api/player?player-id=ID_DO_JOGADOR&api-key=SUA_API_KEY&user-name=SEU_NOME_DE_ADMINISTRADOR" \\`}
+                     </code>
+                    }
+
+                    {lenguageProgramming === 'gdscript' && 
+                    <code>
+{`
+    var playerId = "7851c27f-4447-4f9a-a34e-dbefc1500a9d" # ID do jogador que você deseja buscar
+    var apiKey = "SUA_API_KEY"
+    var userName = "SEU_NOME_DE_USUARIO"
+
+    func _on_button_pressed():
+        var url = "localhost:3000/api/player?player-id=" + playerId + "&api-key=" + apiKey + "&user-name=" + userName
+        $HTTPRequest.request(url)
+
+    func _on_HTTPRequest_request_completed(result, response_code, headers, body):
+        if response_code == 200:
+            var response = JSON.parse(body.get_string_from_utf8())
+            print("Dados do jogador:", response)
+    
+`}
+                    </code>
+                    }
+
+                </pre>
+
+                <h3>Resposta</h3>
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+                    <code className="language-json">
+{`{
+	"id": "7851c27f-4447-4f9a-a34e-dbefc1500a9d",
+	"name": "gabi",
+	"dateOfBirth": null,
+	"gameServerId": "26768b76-bf4a-4bec-ba5a-397a68032359",
+	"items": [],
+	"data": [
+		{
+			"uuid": "9077a057-2ce2-412e-9ef1-ca98fcdd0b14",
+			"nameData": "level",
+			"value": 1,
+			"maxValue": 100,
+			"minValue": 1,
+			"player": null,
+			"gameServerModel": null
+		},
+		{
+			"uuid": "1dce2d41-6b13-4d11-97ef-658b04496731",
+			"nameData": "coin",
+			"value": 0,
+			"maxValue": 100,
+			"minValue": 0,
+			"player": null,
+			"gameServerModel": null
+		}
+	]
+}`}
+                    </code>
+                </pre>
+            </section>
+
+            <section className='mb-16 bg-white rounded-xl md:p-10'>
+
+                <h2 className="text-2xl font-semibold mb-4">Adicionando um novo valor ao dado</h2>
+                <p>Para adicionar um novo valor ao dado, temos duas alternativas de rotas:</p>
+                <ol className='text-lg md:text-xl text-gray-800 max-w-3xl pb-6'>
+                    <li>
+                        <p>Esta rota permite almentar o valor do dado:</p>
+                        <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+                            <code className=" p-1 rounded"> <code className='bg-green-500 p-1 rounded'>POST</code> /api/player/addValue?api-key=<span className='text-yellow-400 p-1 rounded'>API_KEY</span>&user-name=<span className='text-yellow-400 p-1 rounded'>USER_NAME</span></code>
+                        </pre>
+                    </li>
+                    <li>
+                        <p>Esta rota permite diminuir o valor do dado:</p>
+                        <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+                            <code className=" p-1 rounded"> <code className='bg-green-500 p-1 rounded'>POST</code> /api/player/subtractValue?api-key=<span className='text-yellow-400 p-1 rounded'>API_KEY</span>&user-name=<span className='text-yellow-400 p-1 rounded'>USER_NAME</span></code>
+                        </pre>
+                    </li>
+                </ol>
+
+                <h3 className="text-lg font-semibold mb-4">Corpo da Requisição (Body)</h3>
+                <p className="text-lg md:text-xl text-gray-800 max-w-3xl pb-6">
+                    O corpo da requisição deve ser um objeto JSON contendo os seguintes campos:
+                </p>
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+                    <code className="language-json">
+{
+`
+{
+    "playerId": "id do jogador",
+    "dataId": "id do dado",
+    "gameId": "id do game server",
+    "value": 10 # valor a ser adicionado ou subtraiido
+}    
+`
+}
+                    </code>
+                </pre>
+
+                <h3 className="text-lg font-semibold mb-4">Exemplo de Requisição {lenguageProgramming}</h3>
+                <div className='bg-white flex p-0 mb-4 rounded'>
+                        <select name="lenguage" onChange={(e) => setLenguageProgramming(e.target.value)} className="bg-slate-300 text-gray-900 p-2 rounded" id="">
+                            {lenguages.map((lang) => (
+                                <option key={lang} value={lang} selected={lenguageProgramming === lang}>{lang}</option>
+                            ))}
+                        </select>
+                </div>
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
+
+                    {lenguageProgramming === 'bash' && 
+                    <code>
+{`curl -X POST \\
+    http://localhost:3000/api/player/addValue?api-key=API_KEY&user-name=USER_NAME \\
+    -H 'Content-Type: application/json' \\
+    -d '{
+        "playerId": "id do jogador",
+        "dataId": "id do dado",
+        "gameId": "id do game server",
+        "value": 10 # valor a ser adicionado ou subtraiido
+    }'`}
+                    </code>
+                    }
+
+                    {lenguageProgramming === 'gdscript' && (
+                        <code>
+{
+`
+var url = "http://localhost:3000/api/player/addValue"
+var api_key = "SUA_API_KEY"
+var user_name = "SEU_USER_NAME"
+var full_url = "%s?api-key=%s&user-name=%s" % [url, api_key, user_name]
+var body = {
+    "playerId": "id do jogador",
+    "dataId": "id do dado",
+    "gameId": "id do game server",
+    "value": 10 # valor a ser adicionado ou subtraiido
+}
+var json_body = json.print(body)
+
+var headers = {
+    "Content-Type": "application/json"
+}
+
+func _on_button_pressed():
+    $HTTPRequest.request(full_url, headers, false, HTTPClient.METHOD_POST, json_body)
+
+func _on_HTTPRequest_request_completed(result, response_code, headers, body):
+    if response_code == 200:
+        var response = JSON.parse(body.get_string_from_utf8())
+        print("Resposta:", response)
+`
+}
+                        </code>
+                    )}
+
+                </pre>
             </section>
 
         </div>

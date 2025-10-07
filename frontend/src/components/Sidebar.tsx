@@ -12,23 +12,18 @@ const Sidebar = () => {
             </a>
           </li>
           <li className="mb-2">
-            <a href="/docs/pt-BR/auth" className="block hover:bg-gray-700 p-2 rounded">
-              Authentencição
-            </a>
-          </li>
-          <li className="mb-2">
             <a href="/docs/pt-BR/gameserver" className="block hover:bg-gray-700 p-2 rounded">
               GameServer
             </a>
           </li>
           <li className="mb-2">
+            <a href="/docs/pt-BR/player" className="block hover:bg-gray-700 p-2 rounded">
+              Jogador
+            </a>
+          </li>          
+          <li className="mb-2">
             <a href="/docs/pt-BR/data" className="block hover:bg-gray-700 p-2 rounded">
               Gerenciar dados
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="/docs/pt-BR/list" className="block hover:bg-gray-700 p-2 rounded">
-              Gerenciar listas
             </a>
           </li>
         </ul>

@@ -63,7 +63,7 @@ export default function LandingPage() {
 
                 <Link
                   className="text-gray-100 inline-flex h-9 items-center justify-center rounded-md bg-brand-purple-100 px-6 py-4 text-sm font-poppins font-medium shadow transition-colors hover:bg-brand-purple-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:bg-brand-purple-100 disabled:pointer-events-none disabled:opacity-50 dark:bg-brand-purple-100 dark:text-gray-100 dark:hover:bg-brand-purple-200 dark:focus-visible:ring-gray-300"
-                  href="/docs"
+                  href="/docs/pt-BR/introduction"
                 >
                   <img src="/icons/icon_docs.svg" alt="Start Icon" className="h-4 w-4 mr-2" />
                   Documentação

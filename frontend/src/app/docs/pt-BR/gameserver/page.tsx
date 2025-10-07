@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
 const GameServer = () => {
@@ -53,7 +54,12 @@ const GameServer = () => {
                     <li>Aperte nos três pontinhos ao lado do game server que deseja editar e em seguida 'deletar'</li>
                 </ol>
             </section>
-
+            <section className="mb-16 bg-white rounded-xl p-8 md:p-10">
+                <a href='/docs/pt-BR/player' className="flex items-center text-indigo-600 font-semibold hover:underline mx-auto w-fit">
+                    <p>Proximo</p>
+                    <ArrowRight className="inline-block ml-2 h-4 w-4" />
+                </a>
+            </section>
         </div>
     );
 }
