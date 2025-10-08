@@ -154,6 +154,7 @@ export default function GameServerManagementPage({ params }: { params: { id: str
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr className="border-b">
+                  <th className="p-3 text-left font-medium">ID</th>
                   <th className="p-3 text-left font-medium">Chave</th>
                   <th className="p-3 text-left font-medium">Valor</th>
                   <th className="p-3 text-left font-medium">Ações</th>
@@ -162,6 +163,7 @@ export default function GameServerManagementPage({ params }: { params: { id: str
               <tbody>
                 {dataItems?.map((data) => (
                   <tr key={data.id} className="border-b">
+                    <td className="p-3 font-mono">{data.id}</td>
                     <td className="p-3 font-mono">{data.nameData}</td>
                     <td className="p-3">
                       <pre className="bg-gray-100 p-2 rounded-md text-xs">
@@ -198,6 +200,7 @@ export default function GameServerManagementPage({ params }: { params: { id: str
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr className="border-b">
+                  <th className="p-3 text-left font-medium">ID</th>
                   <th className="p-3 text-left font-medium">Nome da Lista</th>
                   <th className="p-3 text-left font-medium">Nº de Itens</th>
                   <th className="p-3 text-left font-medium">Ações</th>
@@ -206,6 +209,7 @@ export default function GameServerManagementPage({ params }: { params: { id: str
               <tbody>
                 {lists.map((list) => (
                   <tr key={list.id} className="border-b">
+                    <td className="p-3 font-mono">{list.id}</td>
                     <td className="p-3 font-medium">{list.name}</td>
                     <td className="p-3">{list.items.length}</td>
                     <td className="p-3">
