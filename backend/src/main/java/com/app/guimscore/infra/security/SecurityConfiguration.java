@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorization -> {
                     authorization.requestMatchers("/api/auth/**").permitAll();
-                    authorization.requestMatchers("/api/auth/generateApiKey").authenticated();
+                    authorization.requestMatchers("/api/auth/apiKey").authenticated();
                     authorization.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll(); // pré-flight
                     authorization.requestMatchers(HttpMethod.POST, "/api/game-server").authenticated();
                     authorization.requestMatchers(HttpMethod.GET, "/api/game-server").authenticated();

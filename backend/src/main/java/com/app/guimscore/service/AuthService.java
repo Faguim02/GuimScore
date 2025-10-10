@@ -1,5 +1,6 @@
 package com.app.guimscore.service;
 
+import com.app.guimscore.dto.ApiKeyDto;
 import com.app.guimscore.model.ApiKey;
 import com.app.guimscore.model.exceptions.NotFoundException;
 import com.app.guimscore.model.exceptions.UnprocessableEntityException;
@@ -21,9 +22,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -108,6 +108,38 @@ public class AuthService {
         }
 
         return false;
+    }
+
+    public List<ApiKeyDto> findAllApiKeysByUserId(UUID userId) {
+        UserModel userModel = this.userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Usuario inexistente"));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", new Locale("pt", "BR"));
+
+        List<ApiKeyDto> apiKeyDtos = new ArrayList<>();
+        for (ApiKey apiKey : userModel.getApiKeys()) {
+            ApiKeyDto dto = new ApiKeyDto(sdf.format(apiKey.getCreatedData()));
+            BeanUtils.copyProperties(apiKey, dto);
+            apiKeyDtos.add(dto);
+        }
+        return apiKeyDtos;
+    }
+
+    public void deleteApiKey(UUID userId, UUID apiKeyId) {
+        UserModel userModel = this.userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Usuario inexistente"));
+
+        Optional<ApiKey> apiKeyOptional = userModel.getApiKeys().stream()
+                .filter(apiKey -> apiKey.getId().equals(apiKeyId))
+                .findFirst();
+
+        if (apiKeyOptional.isEmpty()) {
+            throw new NotFoundException("Api key inexistente");
+        }
+
+        userModel.getApiKeys().remove(apiKeyOptional.get());
+
+        this.userRepository.save(userModel);
     }
 
     private String[] generateKeyEncoded(String name) {
