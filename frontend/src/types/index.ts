@@ -45,3 +45,10 @@ export interface PaginatedResponse<T> {
   page: number;
   limit: number;
 }
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  key: string;
+  createdData: string;
+}
