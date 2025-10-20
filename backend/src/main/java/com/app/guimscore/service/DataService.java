@@ -225,6 +225,28 @@ public class DataService {
         }
     }
 
+    public void alterValueData(Integer value, UUID dataId, UUID gameServerId, UUID playerId) {
+        try {
+
+            Player player = this.playerRepository.findById(playerId)
+                    .orElseThrow(() -> new NotFoundException("Player inexistente"));
+
+            player.getData().stream()
+                    .filter(dataModel -> dataModel.getUuid().equals(dataId))
+                    .forEach(dataModel -> {
+                        dataModel.setValue(value);
+                    });
+            this.playerRepository.save(player);
+
+        } catch (NotFoundException notFoundException) {
+            throw new NotFoundException(notFoundException.getMessage());
+        } catch (ForbiddenException forbiddenException) {
+            throw new ForbiddenException(forbiddenException.getMessage());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private DataModel validateAccessToData(UUID dataId, UUID userId, UUID gameServerId) {
         Optional<DataModel> dataModel = this.dataRepository.findById(dataId);

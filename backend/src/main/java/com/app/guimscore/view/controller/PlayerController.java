@@ -106,4 +106,15 @@ public class PlayerController {
         return ResponseEntity.ok("Um dado foi decrementado");
     }
 
+    @PutMapping("/alterData")
+    ResponseEntity<String> alterData(@RequestBody ValueToDataReqDto valueToData, @RequestParam("api-key") String apiKey, @RequestParam("user-name") String userName) {
+
+        if (!this.authService.validateApiKey(apiKey, userName)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        this.dataService.alterValueData(valueToData.value(), valueToData.dataId(), valueToData.gameId(), valueToData.playerId());
+        return ResponseEntity.ok("Um dado foi alterado");
+    }
+
 }
