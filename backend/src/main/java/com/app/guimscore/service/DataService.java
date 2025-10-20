@@ -173,16 +173,20 @@ public class DataService {
     public void addValueToData(Integer valueToAdd, UUID dataId, UUID gameServerId, UUID playerId) {
         try {
 
-            DataModel dataModel = this.dataRepository.findById(dataId)
-                    .orElseThrow(() -> new NotFoundException("Data inexistente"));
+            Player player = this.playerRepository.findById(playerId)
+                    .orElseThrow(() -> new NotFoundException("Player inexistente"));
 
-            Integer newValue = dataModel.getValue() + valueToAdd;
-            if (newValue > dataModel.getMaxValue()) {
-                newValue = dataModel.getMaxValue();
-            }
-            dataModel.setValue(newValue);
+            player.getData().stream()
+                    .filter(data -> data.getUuid().equals(dataId))
+                    .forEach(data -> {
+                        Integer newValue = data.getValue() + valueToAdd;
+                        if (newValue >= data.getMaxValue()) {
+                            newValue = data.getMaxValue();
+                        }
+                        data.setValue(newValue);
+                    });
 
-            this.dataRepository.save(dataModel);
+            this.playerRepository.save(player);
 
         } catch (NotFoundException notFoundException) {
             throw new NotFoundException(notFoundException.getMessage());
